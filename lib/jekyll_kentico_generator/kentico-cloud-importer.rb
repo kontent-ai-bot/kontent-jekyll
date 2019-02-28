@@ -2,6 +2,7 @@ require 'delivery-sdk-ruby'
 require 'date'
 
 require_relative 'utils/normalize-object'
+require_relative 'utils/item-resolver'
 require_relative 'mappers/mappers'
 require_relative 'constants/constants'
 
@@ -27,10 +28,10 @@ class KenticoCloudImporter
     filtered_taxonomies.each do |taxonomy|
       taxonomy_data = {
         system: taxonomy.system,
-        terms: taxonomy.terms,
+        terms: taxonomy.terms
       }
 
-      result[taxonomy.system.codename] = Utils::normalize_object taxonomy_data
+      result[taxonomy.system.codename] = Utils.normalize_object taxonomy_data
     end
     result
   end
@@ -75,13 +76,13 @@ private
 
       items = items[1]
       items.each do |original_item|
-        item = OpenStruct.new ({
+        item = OpenStruct.new(
           system: original_item.system,
           elements: original_item.elements
-        })
+        )
 
         get_links = ->(c) { original_item.get_links c }
-        data = Utils::normalize_object(data_mapper_factory.new(item,linked_items_mapper_names,  get_links).execute)
+        data = Utils.normalize_object(data_mapper_factory.new(item,linked_items_mapper_names,  get_links).execute)
 
         data_items[name] = data
       end
@@ -99,32 +100,30 @@ private
     return unless items
 
     item_mapper_name = config.data
-    page_name_mapper_name = config.name
     linked_items_mapper_names = config.linked_items
-    content_mapper_name = config.content
-    date_mapper_name = config.date
 
-    filename_mapper_factory = Jekyll::Kentico::Mappers::FilenameMapperFactory.for page_name_mapper_name
     data_mapper_factory = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
-    content_mapper_factory = Jekyll::Kentico::Mappers::ContentMapperFactory.for content_mapper_name
-    date_mapper_factory = Jekyll::Kentico::Mappers::DateMapperFactory.for date_mapper_name
 
     items = items[1]
     posts_data = []
     items.each do |original_item|
-      item = OpenStruct.new ({
+      item = OpenStruct.new(
         system: original_item.system,
         elements: original_item.elements
-      })
+      )
 
-      mapped_name = filename_mapper_factory.new(item).execute
-      date = Date.parse(date_mapper_factory.new(item).execute)
+      item_resolver = ItemResolver.new item
+
+      mapped_name = item_resolver.resolve_filename(config.name)
+      date = item_resolver.resolve_date(config.date, 'date')
+      content = item_resolver.resolve_element(config.content, 'content')
       filename = "#{mapped_name}.html"
+
       get_links = ->(c) { original_item.get_links c }
-      data = Utils::normalize_object(data_mapper_factory.new(item,linked_items_mapper_names,  get_links).execute)
+
+      data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links).execute)
       data['layout'] = layout if layout
       data['date'] = date if date
-      content = content_mapper_factory.new(item).execute
 
       post_data = OpenStruct.new(content: content, data: data, filename: filename)
       posts_data << post_data
@@ -143,17 +142,13 @@ private
       next unless items
 
       item_mapper_name = type_info.data
-      page_name_mapper_name = type_info.name
       linked_items_mapper_names = type_info.linked_items
-      content_mapper_name = type_info.content
 
       collection = type_info.collection
       layouts = type_info.layouts
       type_layout = type_info.layout
 
-      filename_mapper_factory = Jekyll::Kentico::Mappers::FilenameMapperFactory.for page_name_mapper_name
       data_mapper_factory = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
-      content_mapper_factory = Jekyll::Kentico::Mappers::ContentMapperFactory.for content_mapper_name
 
       pages_data = []
       pages_data_by_collection[collection] = pages_data
@@ -166,18 +161,20 @@ private
         page_layout = layouts && layouts[codename]
         layout = page_layout || type_layout || default_layout
 
-        item = OpenStruct.new ({
+        item = OpenStruct.new(
           system: original_item.system,
           elements: original_item.elements
-        })
+        )
 
-        mapped_name = filename_mapper_factory.new(item).execute
+        item_resolver = ItemResolver.new item
+
+        content = item_resolver.resolve_element type_info.content, 'content'
+        mapped_name = item_resolver.resolve_filename type_info.name
         filename = "#{is_index_page ? 'index' : mapped_name}.html"
 
         get_links = ->(c) { original_item.get_links c }
-        data = Utils::normalize_object(data_mapper_factory.new(item,linked_items_mapper_names,  get_links).execute)
+        data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links).execute)
         data['layout'] = layout if layout
-        content = content_mapper_factory.new(item).execute
 
         page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)
         pages_data << page_data
