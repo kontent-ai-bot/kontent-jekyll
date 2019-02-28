@@ -126,7 +126,7 @@ private
       data['date'] = date if date
       content = content_mapper_factory.new(item).execute
 
-      post_data = OpenStruct.new(:content => content, :data => data, :filename => filename)
+      post_data = OpenStruct.new(content: content, data: data, filename: filename)
       posts_data << post_data
     end
     posts_data
@@ -179,7 +179,7 @@ private
         data['layout'] = layout if layout
         content = content_mapper_factory.new(item).execute
 
-        page_data = OpenStruct.new(:content => content, :data => data, :collection => collection, :filename => filename)
+        page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)
         pages_data << page_data
       end
     end

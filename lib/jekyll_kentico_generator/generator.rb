@@ -43,10 +43,10 @@ class Processor
 
       pages_data.each do |page_data|
         path = File.join page_data.filename
-        doc = Jekyll::Document.new path, :site => @site, :collection => collection
-        doc.content = page_data.content
-        doc.data.merge! page_data.data
-        collection.docs << doc
+        page = Jekyll::Document.new path, site: @site, collection: collection
+        page.content = page_data.content
+        page.data.merge! page_data.data
+        collection.docs << page
       end
     end
   end
@@ -56,7 +56,7 @@ class Processor
 
     posts_data.each do |post_data|
       path = File.join @site.source, '_posts', post_data.filename
-      post = Jekyll::Document.new path, :site => @site, :collection => posts
+      post = Jekyll::Document.new path, site: @site, collection: posts
       post.content = post_data.content
       post.data.merge! post_data.data
       posts.docs << post
