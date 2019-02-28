@@ -30,7 +30,11 @@ module Jekyll
         def elements
           mapped_elements = {}
           @item.elements.each_pair do |codename, element|
-            linked_items = @get_links.call codename.to_s
+            begin
+              linked_items = @get_links.call codename.to_s
+            rescue
+              linked_items = []
+            end
             mapper_name = @linked_items_mappers && @linked_items_mappers[codename.to_s]
             parsed_element = parse_element element, mapper_name, linked_items
             mapped_elements[codename] = parsed_element

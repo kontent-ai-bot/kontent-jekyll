@@ -14,10 +14,9 @@ module Jekyll
 
         def execute
           @linked_items.map do |item|
-            {
-              system: item.system,
-              elements: item.elements,
-            }
+            get_links = ->(c) { item.get_links c }
+            data_mapper = DataMapperFactory.new item, nil, get_links
+            data_mapper.execute
           end
         end
 
