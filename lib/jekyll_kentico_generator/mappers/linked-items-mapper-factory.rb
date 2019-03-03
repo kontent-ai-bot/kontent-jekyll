@@ -15,13 +15,11 @@ module Jekyll
         def execute
           @linked_items.map do |item|
             get_links = ->(c) { item.get_links c }
-            data_mapper = DataMapperFactory.new item, nil, get_links
+            get_string = ->(c) { item.get_string c }
+            data_mapper = DataMapperFactory.new item, nil, get_links, get_string
             data_mapper.execute
           end
         end
-
-      protected
-        attr_reader :linked_items
       end
     end
   end

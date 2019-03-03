@@ -4,11 +4,12 @@ require 'date'
 require_relative 'utils/normalize-object'
 require_relative 'utils/item-resolver'
 require_relative 'mappers/mappers'
+require_relative 'resolvers/resolvers'
 require_relative 'constants/constants'
 
 class KenticoCloudImporter
   def initialize(config)
-    @config = config.kentico
+    @config = config
   end
 
   def pages
@@ -21,7 +22,8 @@ class KenticoCloudImporter
 
   def taxonomies
     taxonomies = retrieve_taxonomies
-    codenames = @config.taxonomies
+    codenames = kentico_config.taxonomies
+
     filtered_taxonomies = taxonomies.select { |taxonomy| codenames.include? taxonomy.system.codename }
 
     result = {}
@@ -40,11 +42,26 @@ class KenticoCloudImporter
     generate_data_from_items items_by_type
   end
 private
-  def delivery_client
-    project_id = value_for @config, KenticoConfigKeys::PROJECT_ID
-    secure_key = value_for @config, KenticoConfigKeys::SECURE_KEY
+  def kentico_config
+    @config.kentico
+  end
 
-    Delivery::DeliveryClient.new project_id: project_id, secure_key: secure_key
+  def delivery_client
+    project_id = value_for kentico_config, KenticoConfigKeys::PROJECT_ID
+    secure_key = value_for kentico_config, KenticoConfigKeys::SECURE_KEY
+
+    Delivery::DeliveryClient.new project_id: project_id,
+                                 secure_key: secure_key,
+                                 content_link_url_resolver: content_link_url_resolver,
+                                 inline_content_item_resolver: inline_content_item_resolver
+  end
+
+  def inline_content_item_resolver
+    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver).new
+  end
+
+  def content_link_url_resolver
+    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for(kentico_config.content_link_resolver).new(@config.baseurl)
   end
 
   def retrieve_taxonomies
@@ -57,11 +74,12 @@ private
 
   def items_by_type
     return @items_by_type if @items_by_type
+
     @items_by_type = retrieve_items.group_by { |item| item.system.type }
   end
 
   def generate_data_from_items(items_by_type)
-    config = @config.data
+    config = kentico_config.data
 
     data_items = {}
     config.each_pair do |item_type, type_info|
@@ -82,7 +100,8 @@ private
         )
 
         get_links = ->(c) { original_item.get_links c }
-        data = Utils.normalize_object(data_mapper_factory.new(item,linked_items_mapper_names,  get_links).execute)
+        get_string = ->(c) { original_item.get_string c }
+        data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links, get_string).execute)
 
         data_items[name] = data
       end
@@ -91,7 +110,7 @@ private
   end
 
   def generate_posts_from_items(items_by_type)
-    config = @config.posts
+    config = kentico_config.posts
     layout = config.layout
 
     item_type = config.content_type
@@ -120,8 +139,9 @@ private
       filename = "#{mapped_name}.html"
 
       get_links = ->(c) { original_item.get_links c }
+      get_string = ->(c) { original_item.get_string c }
 
-      data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links).execute)
+      data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links, get_string).execute)
       data['layout'] = layout if layout
       data['date'] = date if date
 
@@ -132,7 +152,7 @@ private
   end
 
   def generate_pages_from_items(items_by_type)
-    pages_config = @config.pages
+    pages_config = kentico_config.pages
     default_layout = pages_config.default_layout
     index_page_codename = pages_config.index
 
@@ -173,7 +193,8 @@ private
         filename = "#{is_index_page ? 'index' : mapped_name}.html"
 
         get_links = ->(c) { original_item.get_links c }
-        data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links).execute)
+        get_string = ->(c) { original_item.get_string c }
+        data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links, get_string).execute)
         data['layout'] = layout if layout
 
         page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)

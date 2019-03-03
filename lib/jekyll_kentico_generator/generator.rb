@@ -27,6 +27,17 @@ rescue StandardError
   Jekyll::logger.debug "Couldn't find custom mappers"
 end
 
+def autoload_resolvers!(config)
+  plugins_dir = config.plugins_dir
+
+  search_path = File.join @base, plugins_dir, 'kentico', 'resolvers'
+  files = Utils.safe_glob search_path, File.join('**', '*.rb')
+
+  External.require_with_graceful_fail files
+rescue StandardError
+  Jekyll::logger.debug "Couldn't find custom resolvers"
+end
+
 class Processor
   def initialize(site)
     @site = site
@@ -91,6 +102,7 @@ module Jekyll
       processor = Processor.new site
 
       autoload_mappers! config
+      autoload_resolvers! config
       importer = KenticoCloudImporter.new(config)
 
       processor.process_pages_data importer.pages
