@@ -10,10 +10,7 @@ module Jekyll
         end
 
         def resolve_item(item)
-          data_mapper = Mappers::DataMapperFactory.for nil
-          get_links = ->(c) { item.get_links c }
-          get_string = ->(c) { item.get_string c }
-          item = data_mapper.new(item, nil, get_links, get_string).execute
+          item = Mappers::DataMapperFactory.new(item).execute
 
           resolve_content_item item
         end

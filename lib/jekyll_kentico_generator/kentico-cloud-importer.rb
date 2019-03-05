@@ -86,22 +86,13 @@ private
       items = items_by_type.find { |type, item| type == item_type.to_s }
       next unless items
 
-      name = type_info.name
+      name = type_info.name || item_type.to_s
       item_mapper_name = type_info.data
-      linked_items_mapper_names = type_info.linked_items
-
       data_mapper_factory = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
 
       items = items[1]
-      items.each do |original_item|
-        item = OpenStruct.new(
-          system: original_item.system,
-          elements: original_item.elements
-        )
-
-        get_links = ->(c) { original_item.get_links c }
-        get_string = ->(c) { original_item.get_string c }
-        data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links, get_string).execute)
+      items.each do |item|
+        data = Utils.normalize_object(data_mapper_factory.new(item).execute)
 
         data_items[name] = data
       end
@@ -119,18 +110,12 @@ private
     return unless items
 
     item_mapper_name = config.data
-    linked_items_mapper_names = config.linked_items
 
     data_mapper_factory = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
 
     items = items[1]
     posts_data = []
-    items.each do |original_item|
-      item = OpenStruct.new(
-        system: original_item.system,
-        elements: original_item.elements
-      )
-
+    items.each do |item|
       item_resolver = ItemResolver.new item
 
       mapped_name = item_resolver.resolve_filename(config.name)
@@ -138,10 +123,7 @@ private
       content = item_resolver.resolve_element(config.content, 'content')
       filename = "#{mapped_name}.html"
 
-      get_links = ->(c) { original_item.get_links c }
-      get_string = ->(c) { original_item.get_string c }
-
-      data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links, get_string).execute)
+      data = Utils.normalize_object(data_mapper_factory.new(item).execute)
       data['layout'] = layout if layout
       data['date'] = date if date
 
@@ -162,7 +144,6 @@ private
       next unless items
 
       item_mapper_name = type_info.data
-      linked_items_mapper_names = type_info.linked_items
 
       collection = type_info.collection
       layouts = type_info.layouts
@@ -174,17 +155,12 @@ private
       pages_data_by_collection[collection] = pages_data
 
       items = items[1]
-      items.each do |original_item|
-        codename = original_item.system.codename
+      items.each do |item|
+        codename = item.system.codename
         is_index_page = index_page_codename == codename
 
         page_layout = layouts && layouts[codename]
         layout = page_layout || type_layout || default_layout
-
-        item = OpenStruct.new(
-          system: original_item.system,
-          elements: original_item.elements
-        )
 
         item_resolver = ItemResolver.new item
 
@@ -192,9 +168,7 @@ private
         mapped_name = item_resolver.resolve_filename type_info.name
         filename = "#{is_index_page ? 'index' : mapped_name}.html"
 
-        get_links = ->(c) { original_item.get_links c }
-        get_string = ->(c) { original_item.get_string c }
-        data = Utils.normalize_object(data_mapper_factory.new(item, linked_items_mapper_names, get_links, get_string).execute)
+        data = Utils.normalize_object(data_mapper_factory.new(item).execute)
         data['layout'] = layout if layout
 
         page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)
