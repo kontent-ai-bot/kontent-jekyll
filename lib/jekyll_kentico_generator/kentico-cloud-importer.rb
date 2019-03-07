@@ -2,7 +2,6 @@ require 'delivery-sdk-ruby'
 require 'date'
 
 require_relative 'utils/normalize-object'
-require_relative 'utils/item-resolver'
 require_relative 'mappers/mappers'
 require_relative 'resolvers/resolvers'
 require_relative 'constants/constants'
@@ -10,6 +9,7 @@ require_relative 'constants/constants'
 class KenticoCloudImporter
   def initialize(config)
     @config = config
+    Jekyll::Kentico::Mappers::DataMapperFactory.set_max_level_of_nesting(kentico_config.max_level_of_nesting)
   end
 
   def pages
@@ -20,9 +20,15 @@ class KenticoCloudImporter
     generate_posts_from_items items_by_type
   end
 
+  def data
+    generate_data_from_items items_by_type
+  end
+
   def taxonomies
     taxonomies = retrieve_taxonomies
     codenames = kentico_config.taxonomies
+
+    return unless taxonomies
 
     filtered_taxonomies = taxonomies.select { |taxonomy| codenames.include? taxonomy.system.codename }
 
@@ -36,10 +42,6 @@ class KenticoCloudImporter
       result[taxonomy.system.codename] = Utils.normalize_object taxonomy_data
     end
     result
-  end
-
-  def data
-    generate_data_from_items items_by_type
   end
 private
   def kentico_config
@@ -69,7 +71,10 @@ private
   end
 
   def retrieve_items
-    delivery_client.items.execute { |response| return response.items }
+    delivery_client
+      .items
+      .depth(kentico_config.max_level_of_nesting)
+      .execute { |response| return response.items }
   end
 
   def items_by_type
@@ -82,7 +87,7 @@ private
     config = kentico_config.data
 
     data_items = {}
-    config.each_pair do |item_type, type_info|
+    config && config.each_pair do |item_type, type_info|
       items = items_by_type.find { |type, item| type == item_type.to_s }
       next unless items
 
@@ -104,8 +109,9 @@ private
     config = kentico_config.posts
     layout = config.layout
 
-    item_type = config.content_type
+    return unless config
 
+    item_type = config.content_type
     items = items_by_type.find { |type, item| type == item_type.to_s }
     return unless items
 
@@ -135,6 +141,9 @@ private
 
   def generate_pages_from_items(items_by_type)
     pages_config = kentico_config.pages
+
+    return unless pages_config && pages_config.content_type
+
     default_layout = pages_config.default_layout
     index_page_codename = pages_config.index
 
