@@ -2,10 +2,10 @@ module Jekyll
   module Kentico
     module Mappers
       class DataMapperFactory
-        @@max_level_of_nesting = 1
+        @@max_linked_items_depth = 1
 
-        def self.set_max_level_of_nesting(max_level_of_nesting)
-          @@max_level_of_nesting = max_level_of_nesting
+        def self.set_max_linked_items_depth(max_linked_items_depth)
+          @@max_linked_items_depth = max_linked_items_depth
         end
 
         # @return [DataMapperFactory]
@@ -14,9 +14,9 @@ module Jekyll
           Module.const_get(mapper_name)
         end
 
-        def initialize(item, level_of_nesting = 0)
+        def initialize(item, linked_items_depth = 0)
           @item = item
-          @level_of_nesting = level_of_nesting
+          @linked_items_depth = linked_items_depth
         end
 
         def execute
@@ -33,8 +33,8 @@ module Jekyll
             parsed_element =
               case element.type
               when ItemElement::LINKED_ITEMS
-                return [] unless @level_of_nesting < @@max_level_of_nesting
-                @item.get_links(codename.to_s).map { |item| DataMapperFactory.new(item, @level_of_nesting + 1).execute }
+                return [] unless @linked_items_depth < @@max_linked_items_depth
+                @item.get_links(codename.to_s).map { |item| DataMapperFactory.new(item, @linked_items_depth + 1).execute }
               when ItemElement::ASSET
                 element.value.map { |asset| asset['url'] }
               when ItemElement::RICH_TEXT

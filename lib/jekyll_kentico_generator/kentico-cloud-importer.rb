@@ -9,7 +9,7 @@ require_relative 'constants/constants'
 class KenticoCloudImporter
   def initialize(config)
     @config = config
-    Jekyll::Kentico::Mappers::DataMapperFactory.set_max_level_of_nesting(kentico_config.max_level_of_nesting)
+    Jekyll::Kentico::Mappers::DataMapperFactory.set_max_linked_items_depth(kentico_config.max_linked_items_depth)
   end
 
   def pages
@@ -73,7 +73,8 @@ private
   def retrieve_items
     delivery_client
       .items
-      .depth(kentico_config.max_level_of_nesting)
+      .request_latest_content
+      .depth(kentico_config.max_linked_items_depth)
       .execute { |response| return response.items }
   end
 
