@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll_kentico_generator (0.3.1)
+    jekyll-kentico (0.3.3)
       delivery-sdk-ruby (~> 0.16.0)
 
 GEM
@@ -39,7 +39,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
-  jekyll_kentico_generator!
+  jekyll-kentico!
   rake (~> 10.0)
 
 BUNDLED WITH

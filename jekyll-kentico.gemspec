@@ -1,11 +1,11 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "jekyll_kentico_generator/version"
+require "jekyll-kentico/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "jekyll_kentico_generator"
-  spec.version       = JekyllKenticoGenerator::VERSION
+  spec.name          = "jekyll-kentico"
+  spec.version       = Jekyll::Kentico::VERSION
   spec.authors       = ["RadoslavK"]
   spec.email         = ["RadoslavK@kentico.com"]
 
