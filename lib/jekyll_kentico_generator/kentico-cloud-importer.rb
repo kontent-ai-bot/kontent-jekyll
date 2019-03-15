@@ -52,7 +52,7 @@ private
     project_id = value_for kentico_config, KenticoConfigKeys::PROJECT_ID
     secure_key = value_for kentico_config, KenticoConfigKeys::SECURE_KEY
 
-    Delivery::DeliveryClient.new project_id: project_id,
+    KenticoCloud::Delivery::DeliveryClient.new project_id: project_id,
                                  secure_key: secure_key,
                                  content_link_url_resolver: content_link_url_resolver,
                                  inline_content_item_resolver: inline_content_item_resolver

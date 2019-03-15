@@ -3,7 +3,7 @@ require 'delivery-sdk-ruby'
 module Jekyll
   module Kentico
     module Resolvers
-      class InlineContentItemResolver < Delivery::Resolvers::InlineContentItemResolver
+      class InlineContentItemResolver < KenticoCloud::Delivery::Resolvers::InlineContentItemResolver
         # @return [InlineContentItemResolver]
         def self.for(resolver_name)
           resolver_name && Module.const_get(resolver_name)
