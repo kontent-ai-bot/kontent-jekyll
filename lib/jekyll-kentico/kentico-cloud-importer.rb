@@ -67,7 +67,10 @@ private
   end
 
   def retrieve_taxonomies
-    delivery_client.taxonomies.execute { |response| return response.taxonomies }
+    delivery_client
+      .taxonomies
+      .request_latest_content
+      .execute { |response| return response.taxonomies }
   end
 
   def retrieve_items
@@ -84,6 +87,15 @@ private
     @items_by_type = retrieve_items.group_by { |item| item.system.type }
   end
 
+  def resolve_content_item(item)
+    return @content_item_resolver.new(item).execute if @content_item_resolver
+
+    item_mapper_name = kentico_config.content_item_resolver
+    @content_item_resolver = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
+
+    @content_item_resolver.new(item).execute
+  end
+
   def generate_data_from_items(items_by_type)
     config = kentico_config.data
 
@@ -93,12 +105,10 @@ private
       next unless items
 
       name = type_info.name || item_type.to_s
-      item_mapper_name = type_info.data
-      data_mapper_factory = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
 
       items = items[1]
       items.each do |item|
-        data = Utils.normalize_object(data_mapper_factory.new(item).execute)
+        data = Utils.normalize_object(resolve_content_item(item))
 
         data_items[name] = data
       end
@@ -116,10 +126,6 @@ private
     items = items_by_type.find { |type, item| type == item_type.to_s }
     return unless items
 
-    item_mapper_name = config.data
-
-    data_mapper_factory = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
-
     items = items[1]
     posts_data = []
     items.each do |item|
@@ -130,7 +136,7 @@ private
       content = item_resolver.resolve_element(config.content, 'content')
       filename = "#{mapped_name}.html"
 
-      data = Utils.normalize_object(data_mapper_factory.new(item).execute)
+      data = Utils.normalize_object(resolve_content_item(item))
       data['layout'] = layout if layout
       data['date'] = date if date
 
@@ -153,13 +159,9 @@ private
       items = items_by_type.find { |type, item| type == item_type.to_s }
       next unless items
 
-      item_mapper_name = type_info.data
-
       collection = type_info.collection
       layouts = type_info.layouts
       type_layout = type_info.layout
-
-      data_mapper_factory = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
 
       pages_data = []
       pages_data_by_collection[collection] = pages_data
@@ -178,7 +180,7 @@ private
         mapped_name = item_resolver.resolve_filename type_info.name
         filename = "#{is_index_page ? 'index' : mapped_name}.html"
 
-        data = Utils.normalize_object(data_mapper_factory.new(item).execute)
+        data = Utils.normalize_object(resolve_content_item(item))
         data['layout'] = layout if layout
 
         page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)
