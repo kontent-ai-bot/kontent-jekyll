@@ -149,13 +149,13 @@ private
   def generate_pages_from_items(items_by_type)
     pages_config = kentico_config.pages
 
-    return unless pages_config && pages_config.content_type
+    return unless pages_config && pages_config.content_types
 
     default_layout = pages_config.default_layout
     index_page_codename = pages_config.index
 
     pages_data_by_collection = {}
-    pages_config.content_type.each_pair do |item_type, type_info|
+    pages_config.content_types.each_pair do |item_type, type_info|
       items = items_by_type.find { |type, item| type == item_type.to_s }
       next unless items
 
