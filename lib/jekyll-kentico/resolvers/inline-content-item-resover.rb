@@ -10,7 +10,7 @@ module Jekyll
         end
 
         def resolve_item(item)
-          item = Mappers::DataMapperFactory.new(item).execute
+          item = ContentItemResolver.new.resolve_item(item)
 
           resolve_content_item item
         end

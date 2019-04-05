@@ -1,27 +1,28 @@
 module Jekyll
   module Kentico
-    module Mappers
-      class DataMapperFactory
+    module Resolvers
+      class ContentItemResolver
         @@max_linked_items_depth = 1
 
         def self.set_max_linked_items_depth(max_linked_items_depth)
           @@max_linked_items_depth = max_linked_items_depth
         end
 
-        # @return [DataMapperFactory]
+        # @return [ContentItemResolver]
         def self.for(mapper_name)
-          mapper_name ||= Jekyll::Kentico::Mappers::DataMapperFactory.to_s
+          mapper_name ||= Jekyll::Kentico::Resolvers::ContentItemResolver.to_s
           Module.const_get(mapper_name)
         end
 
-        def initialize(item, linked_items_depth = 0)
-          @item = item
+        def initialize(linked_items_depth = 0)
           @linked_items_depth = linked_items_depth
         end
 
-        def execute
+        def resolve_item(item)
+          @item = item
+
           OpenStruct.new(
-            system: @item.system,
+            system: item.system,
             elements: elements
           )
         end
@@ -34,7 +35,7 @@ module Jekyll
               case element.type
               when ItemElement::LINKED_ITEMS
                 return [] unless @linked_items_depth < @@max_linked_items_depth
-                @item.get_links(codename.to_s).map { |item| DataMapperFactory.new(item, @linked_items_depth + 1).execute }
+                @item.get_links(codename.to_s).map { |item| ContentItemResolver.new(@linked_items_depth + 1).resolve_item(item) }
               when ItemElement::ASSET
                 element.value.map { |asset| asset['url'] }
               when ItemElement::RICH_TEXT

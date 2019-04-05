@@ -1,15 +1,14 @@
 require 'delivery-sdk-ruby'
 require 'date'
 
-require_relative 'utils/normalize-object'
-require_relative 'mappers/mappers'
+require_relative 'utils/utils'
 require_relative 'resolvers/resolvers'
 require_relative 'constants/constants'
 
 class KenticoCloudImporter
   def initialize(config)
     @config = config
-    Jekyll::Kentico::Mappers::DataMapperFactory.set_max_linked_items_depth(kentico_config.max_linked_items_depth)
+    Jekyll::Kentico::Resolvers::ContentItemResolver.set_max_linked_items_depth(kentico_config.max_linked_items_depth)
   end
 
   def pages
@@ -88,12 +87,12 @@ private
   end
 
   def resolve_content_item(item)
-    return @content_item_resolver.new(item).execute if @content_item_resolver
+    return @content_item_resolver.resolve_item(item) if @content_item_resolver
 
     item_mapper_name = kentico_config.content_item_resolver
-    @content_item_resolver = Jekyll::Kentico::Mappers::DataMapperFactory.for item_mapper_name
+    @content_item_resolver = Jekyll::Kentico::Resolvers::ContentItemResolver.for(item_mapper_name).new
 
-    @content_item_resolver.new(item).execute
+    @content_item_resolver.resolve_item(item)
   end
 
   def generate_data_from_items(items_by_type)
@@ -129,7 +128,7 @@ private
     items = items[1]
     posts_data = []
     items.each do |item|
-      item_resolver = ItemResolver.new item
+      item_resolver = ItemElementResolver.new item
 
       mapped_name = item_resolver.resolve_filename(config.name)
       date = item_resolver.resolve_date(config.date, 'date')
@@ -174,7 +173,7 @@ private
         page_layout = layouts && layouts[codename]
         layout = page_layout || type_layout || default_layout
 
-        item_resolver = ItemResolver.new item
+        item_resolver = ItemElementResolver.new item
 
         content = item_resolver.resolve_element type_info.content, 'content'
         mapped_name = item_resolver.resolve_filename type_info.name

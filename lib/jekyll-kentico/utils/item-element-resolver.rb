@@ -1,4 +1,4 @@
-class ItemResolver
+class ItemElementResolver
   def initialize(item)
     @item = item
   end
