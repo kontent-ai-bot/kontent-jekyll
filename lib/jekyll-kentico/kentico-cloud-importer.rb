@@ -8,7 +8,6 @@ require_relative 'constants/constants'
 class KenticoCloudImporter
   def initialize(config)
     @config = config
-    Jekyll::Kentico::Resolvers::ContentItemResolver.set_max_linked_items_depth(kentico_config.max_linked_items_depth)
   end
 
   def pages
@@ -90,8 +89,8 @@ private
     return @content_item_resolver.resolve_item(item) if @content_item_resolver
 
     item_mapper_name = kentico_config.content_item_resolver
-    @content_item_resolver = Jekyll::Kentico::Resolvers::ContentItemResolver.for(item_mapper_name).new
 
+    @content_item_resolver = Jekyll::Kentico::Resolvers::ContentItemResolver.register(item_mapper_name)
     @content_item_resolver.resolve_item(item)
   end
 
