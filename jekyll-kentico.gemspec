@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["RadoslavK"]
   spec.email         = ["RadoslavK@kentico.com"]
 
-  spec.summary       = %q{Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{Write a longer description or delete this line.}
-  spec.homepage      = "https://maxchadwick.xyz/blog/building-a-custom-jekyll-command-plugin"
+  spec.summary       = 'Kentico Cloud plugin for Jekyll'
+  spec.description   = 'Jekyll Kentico is utilizing Kentico Cloud, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
+  spec.homepage      = "https://github.com/RadoslavK/jekyll-kentico"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
