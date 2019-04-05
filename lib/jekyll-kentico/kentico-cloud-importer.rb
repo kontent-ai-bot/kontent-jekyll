@@ -75,7 +75,7 @@ private
     delivery_client
       .items
       .request_latest_content
-      .depth(kentico_config.max_linked_items_depth)
+      .depth(kentico_config.max_linked_items_depth || 1)
       .execute { |response| return response.items }
   end
 
