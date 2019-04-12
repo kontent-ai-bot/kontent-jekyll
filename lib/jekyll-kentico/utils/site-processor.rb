@@ -15,7 +15,7 @@ class SiteProcessor
       @site.collections[collection_name] = collection
 
       pages_data.each do |page_data|
-        path = File.join page_data.filename
+        path = page_data.filename
         page = create_document path, @site, collection, page_data
         collection.docs << page
       end

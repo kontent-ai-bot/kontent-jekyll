@@ -90,7 +90,7 @@ private
 
     item_mapper_name = kentico_config.content_item_data_resolver
 
-    @content_item_data_resolver = Jekyll::Kentico::Resolvers::ContentItemDataResolver.register(item_mapper_name)
+    @content_item_data_resolver = Jekyll::Kentico::Resolvers::ContentItemDataResolver.for(item_mapper_name)
     @content_item_data_resolver.resolve_item(item)
   end
 
