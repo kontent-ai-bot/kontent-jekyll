@@ -133,7 +133,7 @@ private
 
       mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(item)
       date = item_resolver.resolve_date(config.date, 'date')
-      content = item_resolver.resolve_element(config.content, 'content')
+      content = item_resolver.resolve_content(config.content, 'content')
       filename = "#{mapped_name}.html"
 
       data = Utils.normalize_object(resolve_content_item(item))
@@ -175,7 +175,7 @@ private
 
         item_resolver = ItemElementResolver.new item
 
-        content = item_resolver.resolve_element type_info.content, 'content'
+        content = item_resolver.resolve_content type_info.content, 'content'
         mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(item)
         filename = "#{mapped_name}.html"
 
