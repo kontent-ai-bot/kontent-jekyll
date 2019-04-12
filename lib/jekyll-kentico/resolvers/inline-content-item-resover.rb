@@ -10,7 +10,7 @@ module Jekyll
         end
 
         def resolve_item(item)
-          item = ContentItemResolver.resolve_item(item)
+          item = ContentItemDataResolver.resolve_item(item)
 
           resolve_content_item item
         end

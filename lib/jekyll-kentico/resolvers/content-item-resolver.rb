@@ -1,15 +1,15 @@
 module Jekyll
   module Kentico
     module Resolvers
-      class ContentItemResolver
+      class ContentItemDataResolver
         @@resolver = nil
 
-        # @return [ContentItemResolver]
-        def self.register(mapper_name)
+        # @return [ContentItemDataResolver]
+        def self.register(resolver_name)
           return @@resolver if @@resolver
 
-          mapper_name ||= Jekyll::Kentico::Resolvers::ContentItemResolver.to_s
-          @@resolver = Module.const_get(mapper_name).new
+          resolver_name ||= Jekyll::Kentico::Resolvers::ContentItemDataResolver.to_s
+          @@resolver = Module.const_get(resolver_name).new
         end
 
         def self.resolve_item(item)

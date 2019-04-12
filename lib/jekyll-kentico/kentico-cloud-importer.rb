@@ -86,12 +86,12 @@ private
   end
 
   def resolve_content_item(item)
-    return @content_item_resolver.resolve_item(item) if @content_item_resolver
+    return @content_item_data_resolver.resolve_item(item) if @content_item_data_resolver
 
-    item_mapper_name = kentico_config.content_item_resolver
+    item_mapper_name = kentico_config.content_item_data_resolver
 
-    @content_item_resolver = Jekyll::Kentico::Resolvers::ContentItemResolver.register(item_mapper_name)
-    @content_item_resolver.resolve_item(item)
+    @content_item_data_resolver = Jekyll::Kentico::Resolvers::ContentItemDataResolver.register(item_mapper_name)
+    @content_item_data_resolver.resolve_item(item)
   end
 
   def generate_data_from_items(items_by_type)
@@ -116,20 +116,22 @@ private
 
   def generate_posts_from_items(items_by_type)
     config = kentico_config.posts
-    layout = config.layout
 
-    return unless config
+    return [] unless config
+
+    layout = config.layout
 
     item_type = config.content_type
     items = items_by_type.find { |type, item| type == item_type.to_s }
-    return unless items
+
+    return [] unless items
 
     items = items[1]
     posts_data = []
     items.each do |item|
       item_resolver = ItemElementResolver.new item
 
-      mapped_name = item_resolver.resolve_filename(config.name)
+      mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(item)
       date = item_resolver.resolve_date(config.date, 'date')
       content = item_resolver.resolve_element(config.content, 'content')
       filename = "#{mapped_name}.html"
@@ -147,10 +149,10 @@ private
   def generate_pages_from_items(items_by_type)
     pages_config = kentico_config.pages
 
-    return unless pages_config && pages_config.content_types
+    return {} unless pages_config && pages_config.content_types
 
-    default_layout = pages_config.default_layout
-    index_page_codename = pages_config.index
+    default_layout = kentico_config.default_layout
+    default_page_layout = pages_config.layout
 
     pages_data_by_collection = {}
     pages_config.content_types.each_pair do |item_type, type_info|
@@ -167,16 +169,15 @@ private
       items = items[1]
       items.each do |item|
         codename = item.system.codename
-        is_index_page = index_page_codename == codename
 
-        page_layout = layouts && layouts[codename]
-        layout = page_layout || type_layout || default_layout
+        item_layout = layouts && layouts[codename]
+        layout = item_layout || type_layout || default_page_layout || default_layout
 
         item_resolver = ItemElementResolver.new item
 
         content = item_resolver.resolve_element type_info.content, 'content'
-        mapped_name = item_resolver.resolve_filename type_info.name
-        filename = "#{is_index_page ? 'index' : mapped_name}.html"
+        mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(item)
+        filename = "#{mapped_name}.html"
 
         data = Utils.normalize_object(resolve_content_item(item))
         data['layout'] = layout if layout
