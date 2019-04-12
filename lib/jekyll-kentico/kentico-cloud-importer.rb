@@ -57,7 +57,7 @@ private
   end
 
   def inline_content_item_resolver
-    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver).new
+    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver).new(@config.baseurl)
   end
 
   def content_link_url_resolver
@@ -105,11 +105,8 @@ private
       name = type_info.name || item_type.to_s
 
       items = items[1]
-      items.each do |item|
-        data = Utils.normalize_object(resolve_content_item(item))
 
-        data_items[name] = data
-      end
+      data_items[name] = items.map { |item| Utils.normalize_object(resolve_content_item(item)) }
     end
     data_items
   end

@@ -9,6 +9,10 @@ module Jekyll
           resolver_name && Module.const_get(resolver_name)
         end
 
+        def initialize(base_url)
+          @base_url = base_url
+        end
+
         def resolve_item(item)
         end
       end
