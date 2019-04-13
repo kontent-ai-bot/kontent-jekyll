@@ -4,6 +4,7 @@ require_relative 'utils/site-processor'
 module Jekyll
   class ContentGenerator < Generator
     safe true
+    priority :highest
 
     def generate(site)
       Jekyll::logger.info 'Starting import from Kentico Cloud'

@@ -98,14 +98,11 @@ private
     config = kentico_config.data
 
     data_items = {}
-    config && config.each_pair do |item_type, type_info|
-      items = items_by_type.find { |type, item| type == item_type.to_s }
+    config && config.each_pair do |item_type, name|
+      items = items_by_type[item_type.to_s]
       next unless items
 
-      name = type_info.name || item_type.to_s
-
-      items = items[1]
-
+      name ||= item_type.to_s
       data_items[name] = items.map { |item| Utils.normalize_object(resolve_content_item(item)) }
     end
     data_items
@@ -116,73 +113,75 @@ private
 
     return [] unless config
 
-    layout = config.layout
+    type = config&.type
+    date_element_name = config&.date
+    title_element_name = config&.title
+    layout = config&.layout
 
-    item_type = config.content_type
-    items = items_by_type.find { |type, item| type == item_type.to_s }
+    posts = items_by_type[type.to_s]
 
-    return [] unless items
+    return [] unless posts
 
-    items = items[1]
     posts_data = []
-    items.each do |item|
-      item_resolver = ItemElementResolver.new item
+    posts.each do |post_item|
+      content = @inline_content_item_resolver.resolve_item post_item
 
-      mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(item)
-      date = item_resolver.resolve_date(config.date, 'date')
-      content = item_resolver.resolve_content(config.content, 'content')
+      item_resolver = ItemElementResolver.new post_item
+      date = item_resolver.resolve_date date_element_name
+      title = item_resolver.resolve_title title_element_name
+      mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(post_item)
       filename = "#{mapped_name}.html"
 
-      data = Utils.normalize_object(resolve_content_item(item))
+      data = { 'data' => Utils.normalize_object(resolve_content_item(post_item)) }
+      data['title'] = title if title
       data['layout'] = layout if layout
       data['date'] = date if date
 
       post_data = OpenStruct.new(content: content, data: data, filename: filename)
       posts_data << post_data
     end
+
     posts_data
   end
 
   def generate_pages_from_items(items_by_type)
     pages_config = kentico_config.pages
+    default_page_layout = kentico_config.default_layout
 
-    return {} unless pages_config && pages_config.content_types
-
-    default_layout = kentico_config.default_layout
-    default_page_layout = pages_config.layout
+    return {} unless pages_config
 
     pages_data_by_collection = {}
-    pages_config.content_types.each_pair do |item_type, type_info|
-      items = items_by_type.find { |type, item| type == item_type.to_s }
-      next unless items
+    pages_config.each_pair do |type, page_config|
+      pages = items_by_type[type.to_s]
+      next unless pages
 
-      collection = type_info.collection
-      layouts = type_info.layouts
-      type_layout = type_info.layout
+      collection = page_config&.collection
+      layout = page_config&.layout || default_page_layout
+      title_element_name = page_config&.title
 
-      pages_data = []
-      pages_data_by_collection[collection] = pages_data
+      unless pages_data_by_collection.key? collection
+        pages_data_by_collection[collection] = []
+      end
+      pages_data = pages_data_by_collection[collection]
 
-      items = items[1]
-      items.each do |item|
-        codename = item.system.codename
+      pages.each do |page_item|
+        content = @inline_content_item_resolver.resolve_item page_item
 
-        item_layout = layouts && layouts[codename]
-        layout = item_layout || type_layout || default_page_layout || default_layout
-
-        item_resolver = ItemElementResolver.new item
-
-        content = item_resolver.resolve_content type_info.content, 'content'
-        mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(item)
+        mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(page_item)
         filename = "#{mapped_name}.html"
 
-        data = Utils.normalize_object(resolve_content_item(item))
+        item_resolver = ItemElementResolver.new page_item
+        title = item_resolver.resolve_title title_element_name
+
+        data = { 'data' => Utils.normalize_object(resolve_content_item(page_item)) }
+        data['title'] = title if title
         data['layout'] = layout if layout
 
         page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)
         pages_data << page_data
       end
     end
+
     pages_data_by_collection
   end
 

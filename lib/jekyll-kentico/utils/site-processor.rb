@@ -28,6 +28,7 @@ class SiteProcessor
     posts_data.each do |post_data|
       path = File.join @site.source, '_posts', post_data.filename
       post = create_document path, @site, posts, post_data
+
       posts.docs << post
     end
   end
@@ -61,9 +62,9 @@ private
   end
 
   def create_document(path, site, collection, source)
-    post = Jekyll::Document.new path, site: site, collection: collection
-    post.content = source.content
-    post.data.merge! source.data
-    post
+    doc = Jekyll::Document.new path, site: site, collection: collection
+    doc.content = source.content
+    doc.data.merge! source.data
+    doc
   end
 end

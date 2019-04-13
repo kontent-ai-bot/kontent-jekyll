@@ -12,9 +12,6 @@ module Jekyll
         def initialize(base_url)
           @base_url = base_url
         end
-
-        def resolve_item(item)
-        end
       end
     end
   end
