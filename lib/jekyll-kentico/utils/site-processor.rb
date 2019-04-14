@@ -45,22 +45,6 @@ private
     Jekyll::KenticoPage.new(@site, page_data)
   end
 
-  def populate_collection(collection_name, documents_data, dir)
-    collection =
-      if @site.collections.key? collection_name
-        @site.collections[collection_name]
-      else
-        collection = Jekyll::Collection.new @site, collection_name
-        @site.collections[collection_name] = collection
-      end
-
-    documents_data.each do |document_data|
-      path = File.join dir, document_data.filename
-      document = create_document path, @site, collection, document_data
-      collection.docs << document
-    end
-  end
-
   def create_document(path, site, collection, source)
     doc = Jekyll::Document.new path, site: site, collection: collection
     doc.content = source.content
