@@ -8,23 +8,24 @@ require_relative 'constants/constants'
 class KenticoCloudImporter
   def initialize(config)
     @config = config
+    @items_by_type_by_language = {}
   end
 
-  def pages
-    generate_pages_from_items items_by_type
+  def pages(language)
+    generate_pages_from_items items_by_type(language)
   end
 
-  def posts
-    generate_posts_from_items items_by_type
+  def posts(language)
+    generate_posts_from_items items_by_type(language)
   end
 
-  def data
-    generate_data_from_items items_by_type
+  def data(language)
+    generate_data_from_items items_by_type(language)
   end
 
   def taxonomies
     taxonomies = retrieve_taxonomies
-    codenames = kentico_config.taxonomies
+    codenames = @config.taxonomies
 
     return unless taxonomies
 
@@ -42,13 +43,9 @@ class KenticoCloudImporter
     result
   end
 private
-  def kentico_config
-    @config.kentico
-  end
-
   def delivery_client
-    project_id = value_for kentico_config, KenticoConfigKeys::PROJECT_ID
-    secure_key = value_for kentico_config, KenticoConfigKeys::SECURE_KEY
+    project_id = value_for @config, KenticoConfigKeys::PROJECT_ID
+    secure_key = value_for @config, KenticoConfigKeys::SECURE_KEY
 
     KenticoCloud::Delivery::DeliveryClient.new project_id: project_id,
                                  secure_key: secure_key,
@@ -57,23 +54,23 @@ private
   end
 
   def content_item_permalink_resolver
-    @content_item_permalink_resolver ||= Jekyll::Kentico::Resolvers::ContentItemPermalinkResolver.for kentico_config
+    @content_item_permalink_resolver ||= Jekyll::Kentico::Resolvers::ContentItemPermalinkResolver.for @config
   end
 
   def content_item_content_resolver
-    @content_item_content_resolver ||= Jekyll::Kentico::Resolvers::ContentItemContentResolver.for kentico_config
+    @content_item_content_resolver ||= Jekyll::Kentico::Resolvers::ContentItemContentResolver.for @config
   end
 
   def content_item_filename_resolver
-    @content_item_filename_resolver ||= Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for kentico_config
+    @content_item_filename_resolver ||= Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for @config
   end
 
   def inline_content_item_resolver
-    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for kentico_config
+    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for @config
   end
 
   def content_link_url_resolver
-    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for kentico_config
+    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for @config
   end
 
   def retrieve_taxonomies
@@ -87,25 +84,44 @@ private
     delivery_client
       .items
       .request_latest_content
-      .depth(kentico_config.max_linked_items_depth || 1)
+      .depth(@config.max_linked_items_depth || 1)
       .execute { |response| return response.items }
   end
 
-  def items_by_type
-    return @items_by_type if @items_by_type
+  def retrieve_localized_items(language)
+    delivery_client
+      .items
+      .language(language)
+      .request_latest_content
+      .depth(@config.max_linked_items_depth || 1)
+      .execute { |response| return response.items }
+  end
 
-    @items_by_type = retrieve_items.group_by { |item| item.system.type }
+  def items_by_type(language)
+    items_by_type = @items_by_type_by_language[language]
+    return items_by_type if items_by_type
+
+    items =
+      if language
+        retrieve_localized_items(language)
+      else
+        retrieve_items
+      end
+
+    items_by_type = items.group_by { |item| item.system.type }
+    @items_by_type_by_language[language] = items_by_type
+    items_by_type
   end
 
   def resolve_content_item_data(item)
     return @content_item_data_resolver.resolve_item(item) if @content_item_data_resolver
 
-    @content_item_data_resolver = Jekyll::Kentico::Resolvers::ContentItemDataResolver.for kentico_config
+    @content_item_data_resolver = Jekyll::Kentico::Resolvers::ContentItemDataResolver.for @config
     @content_item_data_resolver.resolve_item(item)
   end
 
   def generate_data_from_items(items_by_type)
-    config = kentico_config.data
+    config = @config.data
 
     data_items = {}
     config && config.each_pair do |item_type, name|
@@ -119,7 +135,7 @@ private
   end
 
   def generate_posts_from_items(items_by_type)
-    config = kentico_config.posts
+    config = @config.posts
 
     return [] unless config
 
@@ -164,8 +180,8 @@ private
   end
 
   def generate_pages_from_items(items_by_type)
-    pages_config = kentico_config.pages
-    default_page_layout = kentico_config.default_layout
+    pages_config = @config.pages
+    default_page_layout = @config.default_layout
 
     return {} unless pages_config
 

@@ -32,13 +32,19 @@ module Jekyll
     end
 
     def process_site(site, config)
-      importer = KenticoCloudImporter.new(config)
-
+      kentico_config = config.kentico
+      importer = KenticoCloudImporter.new(kentico_config)
       processor = SiteProcessor.new site
-      processor.process_pages_data importer.pages
-      processor.process_posts_data importer.posts
+
+      languages = kentico_config.languages || [nil]
+
       processor.process_taxonomies importer.taxonomies
-      processor.process_data importer.data
+
+      languages.each do |language|
+        processor.process_pages_data importer.pages(language)
+        processor.process_posts_data importer.posts(language)
+        processor.process_data importer.data(language)
+      end
     end
   end
 end
