@@ -57,11 +57,11 @@ private
   end
 
   def inline_content_item_resolver
-    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver).new(@config.baseurl)
+    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver).new
   end
 
   def content_link_url_resolver
-    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for(kentico_config.content_link_resolver).new(@config.baseurl)
+    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for(kentico_config.content_link_resolver).new
   end
 
   def retrieve_taxonomies
