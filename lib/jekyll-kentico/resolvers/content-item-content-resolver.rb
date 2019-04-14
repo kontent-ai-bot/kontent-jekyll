@@ -3,9 +3,11 @@ module Jekyll
     module Resolvers
       class ContentItemContentResolver
         # @return [ContentItemContentResolver]
-        def self.for(resolver_name)
-          resolver_name ||= Jekyll::Kentico::Resolvers::ContentItemContentResolver.to_s
-          Module.const_get(resolver_name).new
+        def self.for(config)
+          resolver_name = config.content_item_content_resolver ||
+            Jekyll::Kentico::Resolvers::ContentItemContentResolver.to_s
+
+          ResolverUtils.get_resolver resolver_name
         end
 
         def resolve_content(item)

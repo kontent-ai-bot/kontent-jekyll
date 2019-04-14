@@ -56,16 +56,24 @@ private
                                  inline_content_item_resolver: inline_content_item_resolver
   end
 
+  def content_item_permalink_resolver
+    @content_item_permalink_resolver ||= Jekyll::Kentico::Resolvers::ContentItemPermalinkResolver.for kentico_config
+  end
+
   def content_item_content_resolver
-    @content_item_content_resolver ||= Jekyll::Kentico::Resolvers::ContentItemContentResolver.for(kentico_config.content_item_content_resolver)
+    @content_item_content_resolver ||= Jekyll::Kentico::Resolvers::ContentItemContentResolver.for kentico_config
+  end
+
+  def content_item_filename_resolver
+    @content_item_filename_resolver ||= Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for kentico_config
   end
 
   def inline_content_item_resolver
-    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver)
+    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for kentico_config
   end
 
   def content_link_url_resolver
-    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for(kentico_config.content_link_resolver)
+    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for kentico_config
   end
 
   def retrieve_taxonomies
@@ -92,9 +100,7 @@ private
   def resolve_content_item_data(item)
     return @content_item_data_resolver.resolve_item(item) if @content_item_data_resolver
 
-    item_mapper_name = kentico_config.content_item_data_resolver
-
-    @content_item_data_resolver = Jekyll::Kentico::Resolvers::ContentItemDataResolver.for(item_mapper_name)
+    @content_item_data_resolver = Jekyll::Kentico::Resolvers::ContentItemDataResolver.for kentico_config
     @content_item_data_resolver.resolve_item(item)
   end
 
@@ -131,6 +137,7 @@ private
     posts_data = []
     posts.each do |post_item|
       content = content_item_content_resolver.resolve_content post_item
+      permalink = content_item_permalink_resolver.resolve_permalink post_item, 'posts'
 
       item_resolver = ItemElementResolver.new post_item
       date = item_resolver.resolve_date date_element_name
@@ -138,7 +145,7 @@ private
       categories = item_resolver.resolve_taxonomy_group categories_taxonomy_group
       tags  = item_resolver.resolve_taxonomy_group tags_taxonomy_group
 
-      mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(post_item)
+      mapped_name = content_item_filename_resolver.resolve_filename(post_item)
       filename = "#{mapped_name}.html"
 
       data = { 'data' => Utils.normalize_object(resolve_content_item_data(post_item)) }
@@ -147,6 +154,7 @@ private
       data['date'] = date if date
       data['categories'] = categories if categories
       data['tags'] = tags if tags
+      data['permalink'] = permalink if permalink
 
       post_data = OpenStruct.new(content: content, data: data, filename: filename)
       posts_data << post_data
@@ -177,8 +185,9 @@ private
 
       pages.each do |page_item|
         content = content_item_content_resolver.resolve_content page_item
+        permalink = content_item_permalink_resolver.resolve_permalink page_item, collection
 
-        mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(page_item)
+        mapped_name = content_item_filename_resolver.resolve_filename(page_item)
         filename = "#{mapped_name}.html"
 
         item_resolver = ItemElementResolver.new page_item
@@ -187,6 +196,7 @@ private
         data = { 'data' => Utils.normalize_object(resolve_content_item_data(page_item)) }
         data['title'] = title if title
         data['layout'] = layout if layout
+        data['permalink'] = permalink if permalink
 
         page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)
         pages_data << page_data
