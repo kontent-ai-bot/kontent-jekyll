@@ -114,9 +114,11 @@ private
     return [] unless config
 
     type = config&.type
+    layout = config&.layout
     date_element_name = config&.date
     title_element_name = config&.title
-    layout = config&.layout
+    categories_taxonomy_group = config&.categories
+    tags_taxonomy_group = config&.tags
 
     posts = items_by_type[type.to_s]
 
@@ -129,6 +131,9 @@ private
       item_resolver = ItemElementResolver.new post_item
       date = item_resolver.resolve_date date_element_name
       title = item_resolver.resolve_title title_element_name
+      categories = item_resolver.resolve_taxonomy_group categories_taxonomy_group
+      tags  = item_resolver.resolve_taxonomy_group tags_taxonomy_group
+
       mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(post_item)
       filename = "#{mapped_name}.html"
 
@@ -136,6 +141,8 @@ private
       data['title'] = title if title
       data['layout'] = layout if layout
       data['date'] = date if date
+      data['categories'] = categories if categories
+      data['tags'] = tags if tags
 
       post_data = OpenStruct.new(content: content, data: data, filename: filename)
       posts_data << post_data

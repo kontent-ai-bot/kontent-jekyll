@@ -15,4 +15,8 @@ class ItemElementResolver
   def resolve_title(element_key)
     @item.elements[element_key || 'title']&.value
   end
+
+  def resolve_taxonomy_group(taxonomy_group)
+    @item.elements.to_h.values.find { |e| e.taxonomy_group == taxonomy_group }&.value&.map(&:codename)
+  end
 end
