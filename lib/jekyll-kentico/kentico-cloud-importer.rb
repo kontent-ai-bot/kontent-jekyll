@@ -56,12 +56,16 @@ private
                                  inline_content_item_resolver: inline_content_item_resolver
   end
 
+  def content_item_content_resolver
+    @content_item_content_resolver ||= Jekyll::Kentico::Resolvers::ContentItemContentResolver.for(kentico_config.content_item_content_resolver)
+  end
+
   def inline_content_item_resolver
-    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver).new
+    @inline_content_item_resolver ||= Jekyll::Kentico::Resolvers::InlineContentItemResolver.for(kentico_config.inline_content_item_resolver)
   end
 
   def content_link_url_resolver
-    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for(kentico_config.content_link_resolver).new
+    @content_link_url_resolver ||= Jekyll::Kentico::Resolvers::ContentLinkResolver.for(kentico_config.content_link_resolver)
   end
 
   def retrieve_taxonomies
@@ -85,7 +89,7 @@ private
     @items_by_type = retrieve_items.group_by { |item| item.system.type }
   end
 
-  def resolve_content_item(item)
+  def resolve_content_item_data(item)
     return @content_item_data_resolver.resolve_item(item) if @content_item_data_resolver
 
     item_mapper_name = kentico_config.content_item_data_resolver
@@ -103,7 +107,7 @@ private
       next unless items
 
       name ||= item_type.to_s
-      data_items[name] = items.map { |item| Utils.normalize_object(resolve_content_item(item)) }
+      data_items[name] = items.map { |item| Utils.normalize_object(resolve_content_item_data(item)) }
     end
     data_items
   end
@@ -126,7 +130,7 @@ private
 
     posts_data = []
     posts.each do |post_item|
-      content = @inline_content_item_resolver.resolve_item post_item
+      content = content_item_content_resolver.resolve_content post_item
 
       item_resolver = ItemElementResolver.new post_item
       date = item_resolver.resolve_date date_element_name
@@ -137,7 +141,7 @@ private
       mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(post_item)
       filename = "#{mapped_name}.html"
 
-      data = { 'data' => Utils.normalize_object(resolve_content_item(post_item)) }
+      data = { 'data' => Utils.normalize_object(resolve_content_item_data(post_item)) }
       data['title'] = title if title
       data['layout'] = layout if layout
       data['date'] = date if date
@@ -172,7 +176,7 @@ private
       pages_data = pages_data_by_collection[collection]
 
       pages.each do |page_item|
-        content = @inline_content_item_resolver.resolve_item page_item
+        content = content_item_content_resolver.resolve_content page_item
 
         mapped_name = Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for(kentico_config.content_item_filename_resolver).resolve_filename(page_item)
         filename = "#{mapped_name}.html"
@@ -180,7 +184,7 @@ private
         item_resolver = ItemElementResolver.new page_item
         title = item_resolver.resolve_title title_element_name
 
-        data = { 'data' => Utils.normalize_object(resolve_content_item(page_item)) }
+        data = { 'data' => Utils.normalize_object(resolve_content_item_data(page_item)) }
         data['title'] = title if title
         data['layout'] = layout if layout
 

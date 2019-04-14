@@ -6,7 +6,7 @@ module Jekyll
       class InlineContentItemResolver < KenticoCloud::Delivery::Resolvers::InlineContentItemResolver
         # @return [InlineContentItemResolver]
         def self.for(resolver_name)
-          resolver_name && Module.const_get(resolver_name)
+          resolver_name && Module.const_get(resolver_name).new
         end
       end
     end
