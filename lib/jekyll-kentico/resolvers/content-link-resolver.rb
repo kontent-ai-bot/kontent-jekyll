@@ -6,9 +6,9 @@ module Jekyll
       class ContentLinkResolver < KenticoCloud::Delivery::Resolvers::ContentLinkResolver
         # @return [ContentLinkResolver]
         def self.for(config)
-          resolver_name = config.content_link_resolver
+          class_name = config.content_link_resolver
 
-          resolver_name && ResolverUtils.get_resolver(resolver_name)
+          class_name && Module.const_get(class_name).new
         end
       end
     end

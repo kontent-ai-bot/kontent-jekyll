@@ -13,7 +13,7 @@ module Jekyll
 
       self.process(@name)
 
-      self.data = page_info.data
+      self.data = page_info.front_matter
       self.content = page_info.content
 
       data.default_proc = proc do |_, key|

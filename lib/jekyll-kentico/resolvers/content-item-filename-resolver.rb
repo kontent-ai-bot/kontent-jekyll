@@ -4,14 +4,20 @@ module Jekyll
       class ContentItemFilenameResolver
         # @return [ContentItemFilenameResolver]
         def self.for(config)
-          resolver_name = config.content_item_filename_resolver ||
+          class_name = config.content_item_filename_resolver ||
             Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.to_s
 
-          ResolverUtils.get_resolver resolver_name
+          Module.const_get(class_name).new
         end
 
         def resolve_filename(item)
-          item.system.codename
+          url_slug = get_url_slug(item)
+          url_slug && url_slug.value || item.system.codename
+        end
+
+      private
+        def get_url_slug(item)
+          item.elements.each_pair { |codename, element| return element if element.type == Constants::ItemElement::URL_SLUG }
         end
       end
     end

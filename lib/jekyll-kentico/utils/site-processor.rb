@@ -77,7 +77,7 @@ private
   def create_document(path, site, collection, source)
     doc = Jekyll::Document.new path, site: site, collection: collection
     doc.content = source.content
-    doc.data.merge! source.data
+    doc.data.merge! source.front_matter
     doc
   end
 end

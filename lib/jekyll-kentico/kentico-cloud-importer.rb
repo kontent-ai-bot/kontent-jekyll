@@ -53,14 +53,6 @@ private
                                  inline_content_item_resolver: inline_content_item_resolver
   end
 
-  def content_item_permalink_resolver
-    @content_item_permalink_resolver ||= Jekyll::Kentico::Resolvers::ContentItemPermalinkResolver.for @config
-  end
-
-  def content_item_content_resolver
-    @content_item_content_resolver ||= Jekyll::Kentico::Resolvers::ContentItemContentResolver.for @config
-  end
-
   def content_item_filename_resolver
     @content_item_filename_resolver ||= Jekyll::Kentico::Resolvers::ContentItemFilenameResolver.for @config
   end
@@ -136,31 +128,22 @@ private
 
   def generate_posts_from_items(items_by_type)
     config = @config.posts
-
     return [] unless config
 
     type = config&.type
-    layout = config&.layout
-    date_element_name = config&.date
-    title_element_name = config&.title
-    categories_element_name = config&.categories
-    tags_element_name = config&.tags
+    content_element_name = config&.content
 
     posts = items_by_type[type.to_s]
-
     return [] unless posts
 
     posts_data = []
     posts.each do |post_item|
-      content = content_item_content_resolver.resolve_content post_item
-      permalink = content_item_permalink_resolver.resolve_permalink post_item
+      content = Jekyll::Kentico::Resolvers::ContentItemContentResolver.for(@config, content_element_name).resolve_content post_item
+      front_matter = Jekyll::Kentico::Resolvers::ContentFrontMatterResolver.resolve @config, post_item, Jekyll::Kentico::Constants::PageType::POST
+      front_matter = Utils.normalize_object(front_matter)
 
-      item_resolver = ItemElementResolver.new post_item
-      date = item_resolver.resolve_date date_element_name
-      date_string = date && date.strftime('%Y-%m-%d')
-      title = item_resolver.resolve_title title_element_name
-      categories = item_resolver.resolve_categories categories_element_name
-      tags  = item_resolver.resolve_tags tags_element_name
+      date = post_item.elements[config.date || 'date']&.value
+      date_string = date && DateTime.parse(date).strftime('%Y-%m-%d')
 
       mapped_name = content_item_filename_resolver.resolve_filename(post_item)
       filename = if date_string
@@ -169,15 +152,7 @@ private
                    "#{mapped_name}.html"
                  end
 
-      data = { 'data' => Utils.normalize_object(resolve_content_item_data(post_item)) }
-      data['title'] = title if title
-      data['layout'] = layout if layout
-      data['date'] =  Time.parse(date_string) if date_string
-      data['categories'] = categories if categories
-      data['tags'] = tags if tags
-      data['permalink'] = permalink if permalink
-
-      post_data = OpenStruct.new(content: content, data: data, filename: filename)
+      post_data = OpenStruct.new(content: content, front_matter: front_matter, filename: filename)
       posts_data << post_data
     end
 
@@ -186,8 +161,6 @@ private
 
   def generate_pages_from_items(items_by_type)
     pages_config = @config.pages
-    default_page_layout = @config.default_layout
-
     return {} unless pages_config
 
     pages_data_by_collection = {}
@@ -196,8 +169,7 @@ private
       next unless pages
 
       collection = page_config&.collection
-      layout = page_config&.layout || default_page_layout
-      title_element_name = page_config&.title
+      content_element_name = page_config&.content
 
       unless pages_data_by_collection.key? collection
         pages_data_by_collection[collection] = []
@@ -205,21 +177,14 @@ private
       pages_data = pages_data_by_collection[collection]
 
       pages.each do |page_item|
-        content = content_item_content_resolver.resolve_content page_item
-        permalink = content_item_permalink_resolver.resolve_permalink page_item
+        content = Jekyll::Kentico::Resolvers::ContentItemContentResolver.for(@config, content_element_name).resolve_content page_item
+        front_matter = Jekyll::Kentico::Resolvers::ContentFrontMatterResolver.resolve @config, page_item, Jekyll::Kentico::Constants::PageType::PAGE
+        front_matter = Utils.normalize_object(front_matter)
 
         mapped_name = content_item_filename_resolver.resolve_filename(page_item)
         filename = "#{mapped_name}.html"
 
-        item_resolver = ItemElementResolver.new page_item
-        title = item_resolver.resolve_title title_element_name
-
-        data = { 'data' => Utils.normalize_object(resolve_content_item_data(page_item)) }
-        data['title'] = title if title
-        data['layout'] = layout if layout
-        data['permalink'] = permalink if permalink
-
-        page_data = OpenStruct.new(content: content, data: data, collection: collection, filename: filename)
+        page_data = OpenStruct.new(content: content, front_matter: front_matter, collection: collection, filename: filename)
         pages_data << page_data
       end
     end
