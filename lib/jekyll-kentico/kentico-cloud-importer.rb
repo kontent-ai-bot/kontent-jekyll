@@ -143,8 +143,8 @@ private
     layout = config&.layout
     date_element_name = config&.date
     title_element_name = config&.title
-    categories_taxonomy_group = config&.categories
-    tags_taxonomy_group = config&.tags
+    categories_element_name = config&.categories
+    tags_element_name = config&.tags
 
     posts = items_by_type[type.to_s]
 
@@ -159,8 +159,8 @@ private
       date = item_resolver.resolve_date date_element_name
       date_string = date && date.strftime('%Y-%m-%d')
       title = item_resolver.resolve_title title_element_name
-      categories = item_resolver.resolve_taxonomy_group categories_taxonomy_group
-      tags  = item_resolver.resolve_taxonomy_group tags_taxonomy_group
+      categories = item_resolver.resolve_categories categories_element_name
+      tags  = item_resolver.resolve_tags tags_element_name
 
       mapped_name = content_item_filename_resolver.resolve_filename(post_item)
       filename = if date_string
