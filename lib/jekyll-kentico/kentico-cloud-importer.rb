@@ -153,21 +153,26 @@ private
     posts_data = []
     posts.each do |post_item|
       content = content_item_content_resolver.resolve_content post_item
-      permalink = content_item_permalink_resolver.resolve_permalink post_item, 'posts'
+      permalink = content_item_permalink_resolver.resolve_permalink post_item
 
       item_resolver = ItemElementResolver.new post_item
       date = item_resolver.resolve_date date_element_name
+      date_string = date && date.strftime('%Y-%m-%d')
       title = item_resolver.resolve_title title_element_name
       categories = item_resolver.resolve_taxonomy_group categories_taxonomy_group
       tags  = item_resolver.resolve_taxonomy_group tags_taxonomy_group
 
       mapped_name = content_item_filename_resolver.resolve_filename(post_item)
-      filename = "#{mapped_name}.html"
+      filename = if date_string
+                   "#{date_string}-#{mapped_name}.html"
+                 else
+                   "#{mapped_name}.html"
+                 end
 
       data = { 'data' => Utils.normalize_object(resolve_content_item_data(post_item)) }
       data['title'] = title if title
       data['layout'] = layout if layout
-      data['date'] = date if date
+      data['date'] =  Time.parse(date_string) if date_string
       data['categories'] = categories if categories
       data['tags'] = tags if tags
       data['permalink'] = permalink if permalink
@@ -201,7 +206,7 @@ private
 
       pages.each do |page_item|
         content = content_item_content_resolver.resolve_content page_item
-        permalink = content_item_permalink_resolver.resolve_permalink page_item, collection
+        permalink = content_item_permalink_resolver.resolve_permalink page_item
 
         mapped_name = content_item_filename_resolver.resolve_filename(page_item)
         filename = "#{mapped_name}.html"
