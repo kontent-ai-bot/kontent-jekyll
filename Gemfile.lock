@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-kentico (0.6.6)
+    jekyll-kentico (0.6.7)
       delivery-sdk-ruby (~> 1.0)
 
 GEM

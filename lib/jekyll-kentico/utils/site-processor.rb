@@ -74,7 +74,7 @@ class SiteProcessor
   end
 private
   def to_kentico_page(page_data)
-    Jekyll::KenticoPage.new(@site, page_data)
+    Jekyll::KenticoPage.create(@site, page_data)
   end
 
   def create_document(path, site, collection, source)
