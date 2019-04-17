@@ -37,12 +37,14 @@ class SiteProcessor
           collection.docs << page
         end
 
+        collection.docs = collection.docs.reverse.uniq(&:path).reverse
         collection.docs.sort!
       else
         @site.pages += pages_data.map(&method(:to_kentico_page))
       end
     end
 
+    @site.pages = @site.pages.reverse.uniq(&:path).reverse
     @site.pages.sort_by!(&:name)
   end
 
@@ -59,6 +61,7 @@ class SiteProcessor
       posts.docs << post
     end
 
+    posts.docs = posts.docs.reverse.uniq(&:path).reverse
     posts.docs.sort!
   end
 
