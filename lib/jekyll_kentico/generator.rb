@@ -2,6 +2,8 @@ require 'jekyll_kentico/site_processing/kentico_cloud_importer'
 require 'jekyll_kentico/site_processing/site_processor'
 
 module Jekyll
+  DEFAULT_LANGUAGE = nil
+
   class ContentGenerator < Generator
     include Kentico::SiteProcessing
 
@@ -38,17 +40,27 @@ module Jekyll
     def process_site(site, config)
       kentico_config = config.kentico
       importer = KenticoCloudImporter.new(kentico_config)
+
       processor = SiteProcessor.new(site)
 
-      languages = kentico_config.languages || [nil]
+      pages = []
+      posts = []
+      data = {}
 
-      processor.process_taxonomies(importer.taxonomies)
-
+      languages = kentico_config.languages || [DEFAULT_LANGUAGE]
       languages.each do |language|
-        processor.process_pages(importer.pages(language))
-        processor.process_posts(importer.posts(language))
-        processor.process_data(importer.data(language))
+        pages += importer.pages(language)
+        posts += importer.posts(language)
+
+        importer.data(language).each do |key, items|
+          data[key] = (data[key] || []) + items
+        end
       end
+
+      processor.process_pages(pages)
+      processor.process_posts(posts)
+      processor.process_data(data)
+      processor.process_taxonomies(importer.taxonomies)
     end
   end
 end

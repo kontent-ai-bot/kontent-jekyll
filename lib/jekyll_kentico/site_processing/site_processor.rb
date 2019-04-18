@@ -1,15 +1,17 @@
 module Jekyll
   module Kentico
     module SiteProcessing
+      RESERVED_COLLECTIONS = %w(posts data)
+
       class SiteProcessor
         def initialize(site)
           @site = site
         end
 
-        def process_pages(pages_data_by_collection)
+        def process_pages(pages_data)
+          pages_data_by_collection = pages_data.group_by(&:collection)
           pages_data_by_collection.each do |collection_name, pages_data|
-            reserved_collections = %w(posts data)
-            should_add_to_collection = collection_name && !collection_name.empty? && !reserved_collections.include?(collection_name)
+            should_add_to_collection = collection_name && !collection_name.empty? && !RESERVED_COLLECTIONS.include?(collection_name)
 
             unless should_add_to_collection
               @site.pages += pages_data.map { |page_data| create_kentico_page(@site, page_data) }
@@ -27,11 +29,7 @@ module Jekyll
             collection = @site.collections[collection_name] ||= Jekyll::Collection.new(@site, collection_name)
 
             pages_data.each do |page_data|
-              path = if collection_name
-                       File.join(@site.source, "_#{collection_name}", page_data.filename)
-                     else
-                       File.join(@site.source, page_data.filename)
-                     end
+              path = File.join(@site.source, "_#{collection_name}", page_data.filename)
 
               page = create_document(path, @site, collection, page_data)
 
@@ -84,7 +82,7 @@ module Jekyll
           page.define_singleton_method(:initialize) do
             @site = site
             @base = site.source
-            @dir = page_info.collection ? "_#{page_info.collection}" : ''
+            @dir = ''
             @name = page_info.filename
             @path = if site.in_theme_dir(@base) == @base
                       site.in_theme_dir(@base, @dir, @name)

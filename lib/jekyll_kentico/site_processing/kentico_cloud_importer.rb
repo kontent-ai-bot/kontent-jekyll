@@ -140,14 +140,10 @@ module Jekyll
             front_matter = normalize_object(front_matter)
 
             date = post_item.elements[config.date || 'date'].value
-            date_string = date && DateTime.parse(date).strftime('%Y-%m-%d')
+            date_string = DateTime.parse(date).strftime('%Y-%m-%d')
 
             mapped_name = content_item_filename_resolver.resolve_filename(post_item)
-            filename = if date_string
-                         "#{date_string}-#{mapped_name}.html"
-                       else
-                         "#{mapped_name}.html"
-                       end
+            filename = "#{date_string}-#{mapped_name}.html"
 
             post_data = OpenStruct.new(content: content, front_matter: front_matter, filename: filename)
             posts_data << post_data
@@ -160,15 +156,13 @@ module Jekyll
           pages_config = @config.pages
           return {} unless pages_config
 
-          pages_data_by_collection = {}
+          pages_data = []
           pages_config.each_pair do |type, page_config|
             pages = items_by_type[type.to_s]
             next unless pages
 
             collection = page_config&.collection
             content_element_name = page_config&.content
-
-            pages_data = pages_data_by_collection[collection] ||= []
 
             pages.each do |page_item|
               content = ContentItemContentResolver.for(@config, content_element_name).resolve_content(page_item)
@@ -178,12 +172,12 @@ module Jekyll
               mapped_name = content_item_filename_resolver.resolve_filename(page_item)
               filename = "#{mapped_name}.html"
 
-              page_data = OpenStruct.new(content: content, front_matter: front_matter, collection: collection, filename: filename)
+              page_data = OpenStruct.new(content: content, collection: collection, front_matter: front_matter, filename: filename)
               pages_data << page_data
             end
           end
 
-          pages_data_by_collection
+          pages_data
         end
 
         def value_for(config, key)
