@@ -89,35 +89,17 @@ module Jekyll
             .execute { |response| return response.taxonomies }
         end
 
-        def retrieve_items
-          delivery_client
-            .items
-            .request_latest_content
-            .depth(@config.max_linked_items_depth || 1)
-            .execute { |response| return response.items }
-        end
-
-        def retrieve_localized_items(language)
-          delivery_client
-            .items
-            .language(language)
-            .request_latest_content
+        def retrieve_items(language)
+          client = delivery_client.items
+          client = client.language(language) if language
+          client.request_latest_content
             .depth(@config.max_linked_items_depth || 1)
             .execute { |response| return response.items }
         end
 
         def items_by_type(language)
-          items_by_type = @items_by_type_by_language[language]
-          return items_by_type if items_by_type
-
-          items =
-            if language
-              retrieve_localized_items(language)
-            else
-              retrieve_items
-            end
-
-          @items_by_type_by_language[language] = items.group_by { |item| item.system.type }
+          @items_by_type_by_language[language] ||=
+            retrieve_items(language).group_by { |item| item.system.type }
         end
 
         def resolve_content_item_data(item)
