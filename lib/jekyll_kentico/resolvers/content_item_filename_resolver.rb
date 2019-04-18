@@ -2,7 +2,6 @@ module Jekyll
   module Kentico
     module Resolvers
       class ContentItemFilenameResolver
-        # @return [ContentItemFilenameResolver]
         def self.for(config)
           class_name = config.content_item_filename_resolver || ContentItemFilenameResolver.to_s
           Module.const_get(class_name).new

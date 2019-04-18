@@ -76,7 +76,6 @@ module Jekyll
   module Kentico
     module Resolvers
       class ContentFrontMatterResolver
-        # @return [ContentFrontMatterResolver]
         def self.resolve(config, content_item, page_type)
           registered_resolver = config.content_front_matter_resolver
           default_resolver = ContentFrontMatterResolver.to_s

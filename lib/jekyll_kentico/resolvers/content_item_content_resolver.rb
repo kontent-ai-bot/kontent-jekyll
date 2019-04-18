@@ -2,7 +2,6 @@ module Jekyll
   module Kentico
     module Resolvers
       class ContentItemContentResolver
-        # @return [ContentItemContentResolver]
         def self.for(config, content_element_name)
           registered_resolver = config.content_item_content_resolver
           default_resolver = ContentItemContentResolver.to_s
