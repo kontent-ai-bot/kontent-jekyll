@@ -183,11 +183,11 @@ class ContentItemResolver < Jekyll::Kentico::Resolvers::ContentItemResolver
       element = params.element
   
       case element.type
-      when Jekyll::Kentico::Constants::ItemElement::ASSET
+      when Jekyll::Kentico::Constants::ItemElementType::ASSET
         element.value.map { |asset| asset['url'] }
-      when Jekyll::Kentico::Constants::ItemElement::RICH_TEXT
+      when Jekyll::Kentico::Constants::ItemElementType::RICH_TEXT
         params.get_string.call(element)
-      when Jekyll::Kentico::Constants::ItemElement::LINKED_ITEMS
+      when Jekyll::Kentico::Constants::ItemElementType::LINKED_ITEMS
         params.get_links.call(element).map(&method(:resolve_item))
       else
         element.value

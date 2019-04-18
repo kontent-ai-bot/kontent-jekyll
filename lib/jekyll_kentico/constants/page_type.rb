@@ -2,8 +2,8 @@ module Jekyll
   module Kentico
     module Constants
       module PageType
-        POST = 'post',
         PAGE = 'page'
+        POST = 'post'
       end
     end
   end

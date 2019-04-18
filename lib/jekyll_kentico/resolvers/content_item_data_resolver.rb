@@ -4,9 +4,7 @@ module Jekyll
       class ContentItemDataResolver
         # @return [ContentItemDataResolver]
         def self.for(config)
-          class_name = config.content_item_data_resolver ||
-            Jekyll::Kentico::Resolvers::ContentItemDataResolver.to_s
-
+          class_name = config.content_item_data_resolver || ContentItemDataResolver.to_s
           Module.const_get(class_name).new
         end
 

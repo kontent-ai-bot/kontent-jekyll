@@ -5,7 +5,7 @@ module Jekyll
         # @return [ContentItemContentResolver]
         def self.for(config, content_element_name)
           registered_resolver = config.content_item_content_resolver
-          default_resolver = Jekyll::Kentico::Resolvers::ContentItemContentResolver.to_s
+          default_resolver = ContentItemContentResolver.to_s
 
           if registered_resolver
             Module.const_get(registered_resolver).new

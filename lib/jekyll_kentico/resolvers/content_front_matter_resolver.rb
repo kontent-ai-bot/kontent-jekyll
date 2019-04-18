@@ -13,7 +13,12 @@ class FrontMatterResolver
   end
 
   def title
-    @content_item.elements[@type_config&.title || 'title']&.value
+    element = get_element(@type_config&.title || 'title')
+    element&.value
+  end
+
+  def get_element(codename)
+    @content_item.elements[codename]
   end
 end
 
@@ -48,18 +53,22 @@ class PostFrontMatterResolver < FrontMatterResolver
   end
 
   def date
-    element = @content_item.elements[@type_config.date || 'date']
-    return unless element.value
-
-    Time.parse(element.value)
+    element = get_element(@type_config.date || 'date')
+    element && Time.parse(element.value)
   end
 
   def categories
-    @content_item.elements[@type_config.categories || 'categories']&.value&.map(&:codename)
+    element = get_element(@type_config.categories || 'categories')
+    return unless element
+
+    element.value.map(&:codename)
   end
 
   def tags
-    @content_item.elements[@type_config.tags || 'tags']&.value&.map(&:codename)
+    element = get_element(@type_config.tags || 'tags')
+    return unless element
+
+    element.value.map(&:codename)
   end
 end
 
@@ -70,13 +79,14 @@ module Jekyll
         # @return [ContentFrontMatterResolver]
         def self.resolve(config, content_item, page_type)
           registered_resolver = config.content_front_matter_resolver
-          default_resolver = Jekyll::Kentico::Resolvers::ContentFrontMatterResolver.to_s
+          default_resolver = ContentFrontMatterResolver.to_s
 
           front_matter = Module.const_get(default_resolver).new(config).resolve_internal(content_item, page_type)
 
           if registered_resolver
             resolver = Module.const_get(registered_resolver).new
-            front_matter.merge! resolver.resolve(content_item, page_type)
+            resolved = resolver.resolve(content_item, page_type)
+            front_matter.merge!(resolved)
           end
 
           front_matter
@@ -95,23 +105,24 @@ module Jekyll
             .resolve
         end
 
-      private
+        private
+
         def resolver_factory
-          return PostFrontMatterResolver if is_post
-          PageFrontMatterResolver if is_page
-        end
-
-        def is_page
-          @page_type == Constants::PageType::PAGE
-        end
-
-        def is_post
-          @page_type == Constants::PageType::POST
+          return PostFrontMatterResolver if post?
+          PageFrontMatterResolver if page?
         end
 
         def type_config
-          return @config.posts if is_post
-          @config.pages[@content_item.system.type] if is_page
+          return @config.posts if post?
+          @config.pages[@content_item.system.type] if page?
+        end
+
+        def page?
+          @page_type == Constants::PageType::PAGE
+        end
+
+        def post?
+          @page_type == Constants::PageType::POST
         end
       end
     end
