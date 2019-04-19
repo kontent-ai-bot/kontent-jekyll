@@ -1,13 +1,13 @@
 module Jekyll
   module Kentico
     module Resolvers
-      class ContentItemFilenameResolver
+      class FilenameResolver
         def self.for(config)
-          class_name = config.content_item_filename_resolver || ContentItemFilenameResolver.to_s
+          class_name = config.filename_resolver || FilenameResolver.to_s
           Module.const_get(class_name).new
         end
 
-        def resolve_filename(item)
+        def resolve(item)
           url_slug = get_url_slug(item)
           url_slug&.value || item.system.codename
         end

@@ -1,10 +1,10 @@
 module Jekyll
   module Kentico
     module Resolvers
-      class ContentItemContentResolver
+      class ContentResolver
         def self.for(config, content_element_name)
-          registered_resolver = config.content_item_content_resolver
-          default_resolver = ContentItemContentResolver.to_s
+          registered_resolver = config.content_resolver
+          default_resolver = ContentResolver.to_s
 
           if registered_resolver
             Module.const_get(registered_resolver).new
@@ -17,7 +17,7 @@ module Jekyll
           @content_element_name = content_element_name
         end
 
-        def resolve_content(item)
+        def resolve(item)
           item.get_string(@content_element_name || 'content')
         end
       end

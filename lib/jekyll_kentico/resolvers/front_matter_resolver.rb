@@ -1,4 +1,4 @@
-class FrontMatterResolver
+class FrontMatterResolverBase
   def initialize(global_config, type_config, content_item)
     @global_config = global_config
     @type_config = type_config
@@ -22,7 +22,7 @@ class FrontMatterResolver
   end
 end
 
-class PageFrontMatterResolver < FrontMatterResolver
+class PageFrontMatterResolver < FrontMatterResolverBase
   def resolve
     {
       item: item,
@@ -36,7 +36,7 @@ class PageFrontMatterResolver < FrontMatterResolver
   end
 end
 
-class PostFrontMatterResolver < FrontMatterResolver
+class PostFrontMatterResolver < FrontMatterResolverBase
   def resolve
     {
       item: item,
@@ -75,10 +75,10 @@ end
 module Jekyll
   module Kentico
     module Resolvers
-      class ContentFrontMatterResolver
+      class FrontMatterResolver
         def self.resolve(config, content_item, page_type)
-          registered_resolver = config.content_front_matter_resolver
-          default_resolver = ContentFrontMatterResolver.to_s
+          registered_resolver = config.front_matter_resolver
+          default_resolver = FrontMatterResolver.to_s
 
           front_matter = Module.const_get(default_resolver).new(config).resolve_internal(content_item, page_type)
 

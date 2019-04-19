@@ -4,10 +4,10 @@ require 'date'
 require 'jekyll_kentico/constants/kentico_config_keys'
 require 'jekyll_kentico/constants/page_type'
 
-require 'jekyll_kentico/resolvers/content_front_matter_resolver'
-require 'jekyll_kentico/resolvers/content_item_content_resolver'
-require 'jekyll_kentico/resolvers/content_item_data_resolver'
-require 'jekyll_kentico/resolvers/content_item_filename_resolver'
+require 'jekyll_kentico/resolvers/front_matter_resolver'
+require 'jekyll_kentico/resolvers/content_resolver'
+require 'jekyll_kentico/resolvers/data_resolver'
+require 'jekyll_kentico/resolvers/filename_resolver'
 require 'jekyll_kentico/resolvers/inline_content_item_resolver'
 
 require 'jekyll_kentico/utils/normalize_object'
@@ -70,8 +70,8 @@ module Jekyll
           )
         end
 
-        def content_item_filename_resolver
-          @content_item_filename_resolver ||= ContentItemFilenameResolver.for(@config)
+        def filename_resolver
+          @filename_resolver ||= FilenameResolver.for(@config)
         end
 
         def inline_content_item_resolver
@@ -102,11 +102,11 @@ module Jekyll
             retrieve_items(language).group_by { |item| item.system.type }
         end
 
-        def resolve_content_item_data(item)
-          return @content_item_data_resolver.resolve_item(item) if @content_item_data_resolver
+        def resolve_data(item)
+          return @data_resolver.resolve(item) if @data_resolver
 
-          @content_item_data_resolver = ContentItemDataResolver.for(@config)
-          @content_item_data_resolver.resolve_item(item)
+          @data_resolver = DataResolver.for(@config)
+          @data_resolver.resolve(item)
         end
 
         def generate_data(items_by_type)
@@ -118,7 +118,7 @@ module Jekyll
             next unless items
 
             name ||= item_type.to_s
-            data_items[name] = items.map { |item| normalize_object(resolve_content_item_data(item)) }
+            data_items[name] = items.map { |item| normalize_object(resolve_data(item)) }
           end
           data_items
         end
@@ -135,14 +135,14 @@ module Jekyll
 
           posts_data = []
           posts.each do |post_item|
-            content = ContentItemContentResolver.for(@config, content_element_name).resolve_content(post_item)
-            front_matter = ContentFrontMatterResolver.resolve(@config, post_item, PageType::POST)
+            content = ContentResolver.for(@config, content_element_name).resolve(post_item)
+            front_matter = FrontMatterResolver.resolve(@config, post_item, PageType::POST)
             front_matter = normalize_object(front_matter)
 
             date = post_item.elements[config.date || 'date'].value
             date_string = DateTime.parse(date).strftime('%Y-%m-%d')
 
-            mapped_name = content_item_filename_resolver.resolve_filename(post_item)
+            mapped_name = filename_resolver.resolve(post_item)
             filename = "#{date_string}-#{mapped_name}.html"
 
             post_data = OpenStruct.new(content: content, front_matter: front_matter, filename: filename)
@@ -165,11 +165,11 @@ module Jekyll
             content_element_name = page_config&.content
 
             pages.each do |page_item|
-              content = ContentItemContentResolver.for(@config, content_element_name).resolve_content(page_item)
-              front_matter = ContentFrontMatterResolver.resolve(@config, page_item, PageType::PAGE)
+              content = ContentResolver.for(@config, content_element_name).resolve(page_item)
+              front_matter = FrontMatterResolver.resolve(@config, page_item, PageType::PAGE)
               front_matter = normalize_object(front_matter)
 
-              mapped_name = content_item_filename_resolver.resolve_filename(page_item)
+              mapped_name = filename_resolver.resolve(page_item)
               filename = "#{mapped_name}.html"
 
               page_data = OpenStruct.new(content: content, collection: collection, front_matter: front_matter, filename: filename)
