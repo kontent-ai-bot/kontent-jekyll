@@ -17,6 +17,10 @@ class FrontMatterResolverBase
     element&.value
   end
 
+  def layout
+    @type_config&.layout || @global_config.default_layout
+  end
+
   def get_element(codename)
     @content_item.elements[codename]
   end
@@ -30,10 +34,6 @@ class PageFrontMatterResolver < FrontMatterResolverBase
       layout: layout
     }
   end
-
-  def layout
-    @type_config&.layout || @global_config.default_layout
-  end
 end
 
 class PostFrontMatterResolver < FrontMatterResolverBase
@@ -46,10 +46,6 @@ class PostFrontMatterResolver < FrontMatterResolverBase
       categories: categories,
       tags: tags
     }
-  end
-
-  def layout
-    @type_config&.layout
   end
 
   def date
