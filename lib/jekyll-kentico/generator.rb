@@ -1,3 +1,4 @@
+require 'jekyll-kentico/site_processing/custom_site_processor'
 require 'jekyll-kentico/site_processing/kentico_cloud_importer'
 require 'jekyll-kentico/site_processing/site_processor'
 
@@ -61,6 +62,9 @@ module Jekyll
       processor.process_posts(posts)
       processor.process_data(data)
       processor.process_taxonomies(importer.taxonomies)
+
+      custom_site_processor = CustomSiteProcessor.for(kentico_config)
+      custom_site_processor&.generate(site, importer.kentico_data)
     end
   end
 end

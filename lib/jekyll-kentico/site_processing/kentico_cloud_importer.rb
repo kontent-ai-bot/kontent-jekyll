@@ -22,7 +22,16 @@ module Jekyll
 
         def initialize(config)
           @config = config
-          @items_by_type_by_language = {}
+          @items_by_type_by_language_cache = {}
+          @items = []
+          @taxonomy_groups = []
+        end
+
+        def kentico_data
+          OpenStruct.new(
+            items: @items.uniq{ |i| "#{i.system.language};#{i.system.id}" },
+            taxonomy_groups: @taxonomy_groups
+          )
         end
 
         def pages(language)
@@ -38,23 +47,27 @@ module Jekyll
         end
 
         def taxonomies
-          taxonomies = retrieve_taxonomies
-          return unless taxonomies
+          return @taxonomies_cache if @taxonomies_cache
 
           codenames = @config.taxonomies
           return {} unless codenames
+
+          taxonomies = retrieve_taxonomies
+          return {} unless taxonomies
+
           filtered_taxonomies = taxonomies.select { |taxonomy| codenames.include? taxonomy.system.codename }
 
-          result = {}
+          @taxonomies_cache = {}
           filtered_taxonomies.each do |taxonomy|
+            @taxonomy_groups << taxonomy
             taxonomy_data = {
               system: taxonomy.system,
               terms: taxonomy.terms
             }
 
-            result[taxonomy.system.codename] = normalize_object(taxonomy_data)
+            @taxonomies_cache[taxonomy.system.codename] = normalize_object(taxonomy_data)
           end
-          result
+          @taxonomies_cache
         end
 
         private
@@ -99,8 +112,10 @@ module Jekyll
         end
 
         def items_by_type(language)
-          @items_by_type_by_language[language] ||=
-            retrieve_items(language).group_by { |item| item.system.type }
+          @items_by_type_by_language_cache[language] ||=
+            retrieve_items(language)
+              .tap { |items| @items += items }
+              .group_by { |item| item.system.type }
         end
 
         def resolve_data(item)
