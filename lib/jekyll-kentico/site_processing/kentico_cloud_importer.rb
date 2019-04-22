@@ -42,6 +42,7 @@ module Jekyll
           return unless taxonomies
 
           codenames = @config.taxonomies
+          return {} unless codenames
           filtered_taxonomies = taxonomies.select { |taxonomy| codenames.include? taxonomy.system.codename }
 
           result = {}

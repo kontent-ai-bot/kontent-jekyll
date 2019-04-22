@@ -171,6 +171,9 @@ You can also specifiy a data resolver to map the content items into custom forma
 ## Taxonomies
 
 To retrieve taxonomies add taxonomies part to the config. Taxonomies will be stored in `site.data.taxonomies`.
+You can access specific taxonomy group data by the taxonomy group codename eg `site.data.taxonomies.sitemap`
+
+[Taxonomy group model](https://developer.kenticocloud.com/reference#list-taxonomy-groups)
 
 ## Content item model
 
