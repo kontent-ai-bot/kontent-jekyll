@@ -19,7 +19,7 @@ module Jekyll
         end
 
         def slug?(element)
-          element.type == Jekyll::Kentico::Constants::ItemElementType::URL_SLUG
+          element.type == Constants::ItemElementType::URL_SLUG
         end
       end
     end

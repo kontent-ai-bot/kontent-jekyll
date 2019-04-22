@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-kentico (0.7.0)
+    jekyll-kentico (0.7.2)
       delivery-sdk-ruby (~> 1.0)
 
 GEM
@@ -32,7 +32,7 @@ GEM
       netrc (~> 0.8)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.5-x64-mingw32)
+    unf_ext (0.0.7.6)
 
 PLATFORMS
   x64-mingw32

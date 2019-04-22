@@ -1,5 +1,5 @@
-require 'jekyll_kentico/site_processing/kentico_cloud_importer'
-require 'jekyll_kentico/site_processing/site_processor'
+require 'jekyll-kentico/site_processing/kentico_cloud_importer'
+require 'jekyll-kentico/site_processing/site_processor'
 
 module Jekyll
   DEFAULT_LANGUAGE = nil

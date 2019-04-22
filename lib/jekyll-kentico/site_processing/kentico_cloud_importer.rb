@@ -1,16 +1,16 @@
 require 'delivery-sdk-ruby'
 require 'date'
 
-require 'jekyll_kentico/constants/kentico_config_keys'
-require 'jekyll_kentico/constants/page_type'
+require 'jekyll-kentico/constants/kentico_config_keys'
+require 'jekyll-kentico/constants/page_type'
 
-require 'jekyll_kentico/resolvers/front_matter_resolver'
-require 'jekyll_kentico/resolvers/content_resolver'
-require 'jekyll_kentico/resolvers/data_resolver'
-require 'jekyll_kentico/resolvers/filename_resolver'
-require 'jekyll_kentico/resolvers/inline_content_item_resolver'
+require 'jekyll-kentico/resolvers/front_matter_resolver'
+require 'jekyll-kentico/resolvers/content_resolver'
+require 'jekyll-kentico/resolvers/data_resolver'
+require 'jekyll-kentico/resolvers/filename_resolver'
+require 'jekyll-kentico/resolvers/inline_content_item_resolver'
 
-require 'jekyll_kentico/utils/normalize_object'
+require 'jekyll-kentico/utils/normalize_object'
 
 module Jekyll
   module Kentico
