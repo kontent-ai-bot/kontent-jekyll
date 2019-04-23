@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-kentico (0.7.2)
+    jekyll-kentico (0.8.0)
       delivery-sdk-ruby (~> 1.0)
 
 GEM
@@ -21,7 +21,7 @@ GEM
     mime-types-data (3.2019.0331)
     mini_portile2 (2.4.0)
     netrc (0.11.0)
-    nokogiri (1.10.2-x64-mingw32)
+    nokogiri (1.10.3-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     rake (10.5.0)
     rest-client (2.1.0.rc1-x64-mingw32)

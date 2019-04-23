@@ -41,6 +41,7 @@ kentico:
   data_resolver: DataResolver
   content_link_resolver: ContentLinkResolver
   inline_content_item_resolver: InlineContentItemResolver
+  custom_site_processor: CustomSiteProcessor
   max_linked_items_depth: 0                                   # Defaults to 1
   default_layout: default                         
   languages:                                                  # Defaults to [nil]
@@ -90,6 +91,7 @@ filename_resolver               | Class name of the page filename resolver, see 
 data_resolver                   | Class name of the data items resolver, see Resolvers section
 content_link_resolver           | Class name of rich text content link resolver, see Resolvers section
 inline_content_item_resolver    | Class name of rich text inline content item resolver, see Resolvers section
+custom_site_processor           | Class name of your custom site processor, see Custom Site Processor section
 max_linked_items_depth          | Maximum depth of resolved linked items
 default_layout                  | Default layout filename without the extension used for all content
 languages                       | Array of languages to retrieve, if not specified then Kentico Cloud project default language will be loaded
@@ -307,4 +309,34 @@ class InlineContentItemResolver < KenticoCloud::Delivery::Resolvers::InlineConte
   end
 end
 
+```
+
+### Custom site processor
+
+If you want to generate some extra content like index pages based on data from Kentico Cloud, you can define your custom site processor. Required method is `generate(site, kentico_data)` where `site` is the same object as in [generate method of Jekyll generator](https://jekyllrb.com/docs/plugins/generators/) and `kentico_data.items` is array of Content Item models and `kentico_data.taxonomy_groups` is array of Taxonomy Group models. They contain only requested content based on your `_config.yml`
+
+```ruby
+class CustomSiteProcessor
+  LANGUAGES = ['en-US']
+  
+  def generate(site, kentico_data)
+    tags = kentico_data.taxonomomy_groups.find{ |tg| tg.system.codename == 'post_tags' }.terms
+
+    LANGUAGES.each do |language|
+      tags_name = "tags-#{language}.html"
+      tags_data = {
+        'title' => 'Tags',
+        'layout' => 'default',
+        'permalink' => "/#{language}/posts/tags"
+      }
+      tags_dir = 'posts'
+      tags_content = <<~TAGS_CONTENT
+        <ul>
+          #{tags.map{ |tag| get_tag_link(tag, language) }.join("\n")}
+        </ul>
+      TAGS_CONTENT
+
+      @site.pages << Page.new(@site, tags_content, tags_data, tags_name, dir: tags_dir) # Page is custom class extending Jekyll::Page
+    end
+  end
 ```
