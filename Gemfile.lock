@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    jekyll-kentico (0.8.1)
-      delivery-sdk-ruby (~> 1.0)
+    jekyll-kentico (0.8.3)
+      delivery-sdk-ruby (= 1.0.4)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    delivery-sdk-ruby (1.0.5)
+    delivery-sdk-ruby (1.0.4)
       nokogiri (~> 1.10.0, >= 1.8.4)
       rest-client (~> 2.1.0.rc1, >= 2.1.0.rc1)
     domain_name (0.5.20180417)
