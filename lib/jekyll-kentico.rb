@@ -11,3 +11,5 @@ require File.dirname(__FILE__) + '/jekyll-kentico/resolvers/inline_content_item_
 
 require File.dirname(__FILE__) + '/jekyll-kentico/constants/item_element_type'
 require File.dirname(__FILE__) + '/jekyll-kentico/constants/page_type'
+
+require File.dirname(__FILE__) + '/jekyll-kentico/utils/normalize_object'
