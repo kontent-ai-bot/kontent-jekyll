@@ -69,7 +69,7 @@ module Jekyll
         end
 
         def process_data(data_items)
-          @site.data.merge!(data_items)
+          @site.data.merge!({ 'items' => data_items })
         end
 
         private

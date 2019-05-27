@@ -60,12 +60,12 @@ module Jekyll
           @taxonomies_cache = {}
           filtered_taxonomies.each do |taxonomy|
             @taxonomy_groups << taxonomy
-            taxonomy_data = {
+            taxonomy_data = normalize_object({
               system: taxonomy.system,
               terms: taxonomy.terms
-            }
+            })
 
-            @taxonomies_cache[taxonomy.system.codename] = normalize_object(taxonomy_data)
+            @taxonomies_cache[taxonomy.system.codename] = taxonomy_data
           end
           @taxonomies_cache
         end
