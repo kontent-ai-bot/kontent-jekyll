@@ -2,17 +2,30 @@ module Jekyll
   module Kentico
     module Resolvers
       class FilenameResolver
-        def self.for(config)
-          class_name = config.filename_resolver || FilenameResolver.to_s
-          Module.const_get(class_name).new
+        def initialize(global_config)
+          @global_config = global_config
         end
 
-        def resolve(item)
-          url_slug = get_url_slug(item)
-          url_slug&.value || item.system.codename
+        def execute(content_item)
+          content = custom_resolver && custom_resolver.resolve(content_item)
+          content || resolve_internal(content_item)
         end
 
         private
+
+        def custom_resolver
+          return @custom_resolver if @custom_resolver
+
+          resolver_name = @global_config.filename_resolver
+          return unless resolver_name
+
+          @custom_resolver =  Module.const_get(resolver_name).new
+        end
+
+        def resolve_internal(content_item)
+          url_slug = get_url_slug(content_item)
+          url_slug&.value || content_item.system.codename
+        end
 
         def get_url_slug(item)
           item.elements.each_pair { |_codename, element| return element if slug?(element) }

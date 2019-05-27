@@ -72,23 +72,30 @@ module Jekyll
   module Kentico
     module Resolvers
       class FrontMatterResolver
-        def self.resolve(config, content_item, page_type)
-          registered_resolver = config.front_matter_resolver
-          default_resolver = FrontMatterResolver.to_s
+        def initialize(global_config)
+          @global_config = global_config
+        end
 
-          front_matter = Module.const_get(default_resolver).new(config).resolve_internal(content_item, page_type)
+        def execute(content_item, page_type)
+          front_matter = resolve_internal(content_item, page_type)
 
-          if registered_resolver
-            resolver = Module.const_get(registered_resolver).new
-            resolved = resolver.resolve(content_item, page_type)
-            front_matter.merge!(resolved)
+          if custom_resolver
+            extra_data = custom_resolver.resolve(content_item, page_type)
+            front_matter.merge!(extra_data)
           end
 
           front_matter
         end
 
-        def initialize(config)
-          @config = config
+        private
+
+        def custom_resolver
+          return @custom_resolver if @custom_resolver
+
+          resolver_name = @global_config.front_matter_resolver
+          return unless resolver_name
+
+          @custom_resolver =  Module.const_get(resolver_name).new
         end
 
         def resolve_internal(content_item, page_type)
@@ -96,11 +103,9 @@ module Jekyll
           @page_type = page_type
 
           resolver_factory
-            .new(@config, type_config, content_item)
+            .new(@global_config, type_config, content_item)
             .resolve
         end
-
-        private
 
         def resolver_factory
           return PostFrontMatterResolver if post?
@@ -108,8 +113,8 @@ module Jekyll
         end
 
         def type_config
-          return @config.posts if post?
-          @config.pages[@content_item.system.type] if page?
+          return @global_config.posts if post?
+          @global_config.pages[@content_item.system.type] if page?
         end
 
         def page?

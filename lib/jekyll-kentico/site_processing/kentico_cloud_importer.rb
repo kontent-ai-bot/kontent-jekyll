@@ -84,8 +84,20 @@ module Jekyll
           )
         end
 
+        def content_resolver
+          @content_resolver ||= ContentResolver.new(@config)
+        end
+
         def filename_resolver
-          @filename_resolver ||= FilenameResolver.for(@config)
+          @filename_resolver ||= FilenameResolver.new(@config)
+        end
+
+        def front_matter_resolver
+          @front_matter_resolver ||= FrontMatterResolver.new(@config)
+        end
+
+        def data_resolver
+          @data_resolver ||= DataResolver.new(@config)
         end
 
         def inline_content_item_resolver
@@ -118,13 +130,6 @@ module Jekyll
               .group_by { |item| item.system.type }
         end
 
-        def resolve_data(item)
-          return @data_resolver.resolve(item) if @data_resolver
-
-          @data_resolver = DataResolver.for(@config)
-          @data_resolver.resolve(item)
-        end
-
         def generate_data(items_by_type)
           config = @config.data
 
@@ -134,31 +139,33 @@ module Jekyll
             next unless items
 
             name ||= item_type.to_s
-            data_items[name] = items.map { |item| normalize_object(resolve_data(item)) }
+            data_items[name] = items.map do |item|
+              data = data_resolver.execute(item)
+              normalize_object(data)
+            end
           end
           data_items
         end
 
         def generate_posts(items_by_type)
-          config = @config.posts
-          return [] unless config
+          posts_config = @config.posts
+          return [] unless posts_config
 
-          type = config&.type
-          content_element_name = config&.content
+          type = posts_config&.type
 
           posts = items_by_type[type.to_s]
           return [] unless posts
 
           posts_data = []
           posts.each do |post_item|
-            content = ContentResolver.for(@config, content_element_name).resolve(post_item)
-            front_matter = FrontMatterResolver.resolve(@config, post_item, PageType::POST)
+            content = content_resolver.execute(post_item, posts_config)
+            front_matter = front_matter_resolver.execute(post_item, PageType::POST)
             front_matter = normalize_object(front_matter)
 
-            date = post_item.elements[config.date || 'date'].value
+            date = post_item.elements[posts_config.date || 'date'].value
             date_string = DateTime.parse(date).strftime('%Y-%m-%d')
 
-            mapped_name = filename_resolver.resolve(post_item)
+            mapped_name = filename_resolver.execute(post_item)
             filename = "#{date_string}-#{mapped_name}.html"
 
             post_data = OpenStruct.new(content: content, front_matter: front_matter, filename: filename)
@@ -178,14 +185,13 @@ module Jekyll
             next unless pages
 
             collection = page_config&.collection
-            content_element_name = page_config&.content
 
             pages.each do |page_item|
-              content = ContentResolver.for(@config, content_element_name).resolve(page_item)
-              front_matter = FrontMatterResolver.resolve(@config, page_item, PageType::PAGE)
+              content = content_resolver.execute(page_item, page_config)
+              front_matter = front_matter_resolver.execute(page_item, PageType::PAGE)
               front_matter = normalize_object(front_matter)
 
-              mapped_name = filename_resolver.resolve(page_item)
+              mapped_name = filename_resolver.execute(page_item)
               filename = "#{mapped_name}.html"
 
               page_data = OpenStruct.new(content: content, collection: collection, front_matter: front_matter, filename: filename)

@@ -2,23 +2,30 @@ module Jekyll
   module Kentico
     module Resolvers
       class ContentResolver
-        def self.for(config, content_element_name)
-          registered_resolver = config.content_resolver
-          default_resolver = ContentResolver.to_s
-
-          if registered_resolver
-            Module.const_get(registered_resolver).new
-          else
-            Module.const_get(default_resolver).new(content_element_name)
-          end
+        def initialize(global_config)
+          @global_config = global_config
         end
 
-        def initialize(content_element_name)
-          @content_element_name = content_element_name
+        def execute(content_item, config)
+          content = custom_resolver && custom_resolver.resolve(content_item)
+          content || resolve_internal(content_item, config)
         end
 
-        def resolve(item)
-          item.get_string(@content_element_name || 'content')
+        private
+
+        def custom_resolver
+          return @custom_resolver if @custom_resolver
+
+          resolver_name = @global_config.content_resolver
+          return unless resolver_name
+
+          @custom_resolver =  Module.const_get(resolver_name).new
+        end
+
+        def resolve_internal(content_item, config)
+          element_name = config.content || 'content'
+          element = content_item.elements[element_name]
+          element && content_item.get_string(element_name)
         end
       end
     end
