@@ -97,8 +97,8 @@ default_layout                  | Default layout filename without the extension 
 languages                       | Array of languages to retrieve, if not specified then Kentico Cloud project default language will be loaded
 posts                           | See _Posts_ config
 pages                           | Hash where keys are content type names values are specific page configs, see _Page config_
-data                            | Hash where keys are content type names and values are accessor names in _site.data_ object.
-taxonomies                      | Array of taxonomy group codenames to retrieve
+data                            | Hash where keys are content type names and values are accessor names in _site.data.items_ object.
+taxonomies                      | Array of taxonomy group codenames to retrieve, available in _site.data.taxonomies_ object.
 
 ## Posts
 
@@ -163,10 +163,10 @@ extension. Each content type can be associated with different layout.
 
 ## Data items
 
-You can generate data items to be accessible through the `site.data`. Add the data part to your
+You can generate data items to be accessible through the `site.data.items`. Add the data part to your
 config and all content types will be added to accessor based on their content types codename.
 You can override the accessor's name with a value associated with the content type codename key.
-Then you can accesss the items at `site.data.accessor_name`.
+Then you can accesss the items at `site.data.items.accessor_name`.
 
 You can also specifiy a data resolver to map the content items into custom format. See resolvers below.
 
@@ -199,7 +199,7 @@ with the classname specified in the config.
 
 ### Content resolvers
 
-To override default content generation, specify a content resolver. `resolve(item)` method is required.
+To override default content generation, specify a content resolver. `resolve(item)` method is required. If this function returns `nil` the default value is used.
 
 ```ruby
 class ContentResolver
@@ -233,7 +233,7 @@ end
 
 ### Filename resolvers
 
-Specify a filename resolver to resolve filenames for your content. `resolve(item)` method is required. Output should be with an extension.
+Specify a filename resolver to resolve filenames for your content. `resolve(item)` method is required. Output should be with an extension. If this function returns `nil` the default filename is used.
 
 ```ruby
 class FilenameResolver
@@ -245,7 +245,7 @@ end
 
 ### Data resolvers
 
-Specify a data resolver to resolve content item for your data items. `resolve(item)` method is required.
+Specify a data resolver to resolve content item for your data items. `resolve(item)` method is required. If this function returns `nil` the default value is used.
 
 ```ruby
 class DataResolver
