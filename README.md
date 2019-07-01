@@ -35,8 +35,7 @@ For full configuration [see wiki](https://github.com/RadoslavK/jekyll-kentico/wi
 plugins:
 - jekyll-kentico
 kentico:
-  project_id: 2dd742d6-107b-48b0-8335-6674c76c9b93            # Required
-  secure_key: 75084b6e-dd0f-4b5d-a2da-66f2a248cec5            # Required if secure toggle is on
+  project_id: 2dd742d6-107b-48b0-8335-6674c76c9b93
   posts:                                                      
     type: blog_post                                           
 ```
