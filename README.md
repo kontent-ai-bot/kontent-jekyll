@@ -29,7 +29,7 @@ You can also run `bundle exec jekyll serve` to run the built site.
 
 To configure the extension, add the following configuration block to Jekyll's `_config.yml`:
 
-For full configuration [see wiki](https://github.com/RadoslavK/jekyll-kentico/wiki/Configuration).
+For full configuration [see wiki](https://github.com/RadoslavK/jekyll-kentico/wiki).
 
 ```yaml
 plugins:
