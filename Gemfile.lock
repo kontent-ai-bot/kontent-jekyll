@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-kentico (0.8.4)
+    jekyll-kentico (0.8.5)
       delivery-sdk-ruby (~> 1.0)
 
 GEM
@@ -11,9 +11,9 @@ GEM
       dotenv (~> 2.7.0)
       nokogiri (~> 1.10.0, >= 1.8.4)
       rest-client (~> 2.1.0.rc1, >= 2.1.0.rc1)
-    domain_name (0.5.20180417)
+    domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    dotenv (2.7.2)
+    dotenv (2.7.4)
     ffi (1.11.1-x64-mingw32)
     http-accept (1.7.0)
     http-cookie (1.0.3)
