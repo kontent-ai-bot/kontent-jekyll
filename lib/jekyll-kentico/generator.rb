@@ -9,6 +9,7 @@ module Jekyll
     include Kentico::SiteProcessing
 
     safe true
+    priority :highest
 
     def generate(site)
       Jekyll::logger.info 'Importing from Kentico Cloud...'
