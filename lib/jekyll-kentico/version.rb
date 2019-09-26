@@ -1,5 +1,5 @@
 module Jekyll
   module Kentico
-    VERSION = '0.8.7'
+    VERSION = '0.9.1'
   end
 end

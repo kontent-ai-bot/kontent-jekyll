@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['RadoslavK']
   spec.email         = ['RadoslavK@kentico.com']
 
-  spec.summary       = 'Kentico Cloud plugin for Jekyll'
-  spec.description   = 'Jekyll Kentico is utilizing Kentico Cloud, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
+  spec.summary       = 'Kentico Kontent plugin for Jekyll'
+  spec.description   = 'Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
   spec.homepage      = 'https://github.com/RadoslavK/jekyll-kentico'
 
   # Specify which files should be added to the gem when it is released.
@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'rake', '~> 10.0'
 
-  spec.add_runtime_dependency 'delivery-sdk-ruby', '~> 1.0'
+  spec.add_runtime_dependency 'delivery-sdk-ruby', '~> 2.0'
 end

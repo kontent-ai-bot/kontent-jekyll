@@ -15,7 +15,7 @@ require 'jekyll-kentico/utils/normalize_object'
 module Jekyll
   module Kentico
     module SiteProcessing
-      class KenticoCloudImporter
+      class KenticoKontentImporter
         include Jekyll::Kentico::Constants
         include Jekyll::Kentico::Resolvers
         include Jekyll::Kentico::Utils
@@ -76,7 +76,7 @@ module Jekyll
           project_id = value_for(@config, KenticoConfigKeys::PROJECT_ID)
           secure_key = value_for(@config, KenticoConfigKeys::SECURE_KEY)
 
-          KenticoCloud::Delivery::DeliveryClient.new(
+          ::Kentico::Kontent::Delivery::DeliveryClient.new(
             project_id: project_id,
             secure_key: secure_key,
             content_link_url_resolver: content_link_url_resolver,

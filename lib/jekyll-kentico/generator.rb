@@ -1,5 +1,5 @@
 require 'jekyll-kentico/site_processing/custom_site_processor'
-require 'jekyll-kentico/site_processing/kentico_cloud_importer'
+require 'jekyll-kentico/site_processing/kentico_kontent_importer'
 require 'jekyll-kentico/site_processing/site_processor'
 
 module Jekyll
@@ -12,7 +12,7 @@ module Jekyll
     priority :highest
 
     def generate(site)
-      Jekyll::logger.info 'Importing from Kentico Cloud...'
+      Jekyll::logger.info 'Importing from Kentico Kontent...'
 
       config = parse_config(site)
 
@@ -40,7 +40,7 @@ module Jekyll
 
     def process_site(site, config)
       kentico_config = config.kentico
-      importer = KenticoCloudImporter.new(kentico_config)
+      importer = KenticoKontentImporter.new(kentico_config)
 
       processor = SiteProcessor.new(site)
 
