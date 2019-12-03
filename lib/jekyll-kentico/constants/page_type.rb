@@ -1,9 +1,11 @@
-module Jekyll
-  module Kentico
-    module Constants
-      module PageType
-        PAGE = 'page'
-        POST = 'post'
+module Kentico
+  module Kontent
+    module Jekyll
+      module Constants
+        module PageType
+          PAGE = 'page'
+          POST = 'post'
+        end
       end
     end
   end

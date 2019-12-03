@@ -68,61 +68,63 @@ class PostFrontMatterResolver < FrontMatterResolverBase
   end
 end
 
-module Jekyll
-  module Kentico
-    module Resolvers
-      class FrontMatterResolver
-        def initialize(global_config)
-          @global_config = global_config
-        end
-
-        def execute(content_item, page_type)
-          front_matter = resolve_internal(content_item, page_type)
-
-          if custom_resolver
-            extra_data = custom_resolver.resolve(content_item, page_type)
-            front_matter.merge!(extra_data)
+module Kentico
+  module Kontent
+    module Jekyll
+      module Resolvers
+        class FrontMatterResolver
+          def initialize(global_config)
+            @global_config = global_config
           end
 
-          front_matter
-        end
+          def execute(content_item, page_type)
+            front_matter = resolve_internal(content_item, page_type)
 
-        private
+            if custom_resolver
+              extra_data = custom_resolver.resolve(content_item, page_type)
+              front_matter.merge!(extra_data)
+            end
 
-        def custom_resolver
-          return @custom_resolver if @custom_resolver
+            front_matter
+          end
 
-          resolver_name = @global_config.front_matter_resolver
-          return unless resolver_name
+          private
 
-          @custom_resolver =  Module.const_get(resolver_name).new
-        end
+          def custom_resolver
+            return @custom_resolver if @custom_resolver
 
-        def resolve_internal(content_item, page_type)
-          @content_item = content_item
-          @page_type = page_type
+            resolver_name = @global_config.front_matter_resolver
+            return unless resolver_name
 
-          resolver_factory
-            .new(@global_config, type_config, content_item)
-            .resolve
-        end
+            @custom_resolver =  Module.const_get(resolver_name).new
+          end
 
-        def resolver_factory
-          return PostFrontMatterResolver if post?
-          PageFrontMatterResolver if page?
-        end
+          def resolve_internal(content_item, page_type)
+            @content_item = content_item
+            @page_type = page_type
 
-        def type_config
-          return @global_config.posts if post?
-          @global_config.pages[@content_item.system.type] if page?
-        end
+            resolver_factory
+              .new(@global_config, type_config, content_item)
+              .resolve
+          end
 
-        def page?
-          @page_type == Constants::PageType::PAGE
-        end
+          def resolver_factory
+            return PostFrontMatterResolver if post?
+            PageFrontMatterResolver if page?
+          end
 
-        def post?
-          @page_type == Constants::PageType::POST
+          def type_config
+            return @global_config.posts if post?
+            @global_config.pages[@content_item.system.type] if page?
+          end
+
+          def page?
+            @page_type == Constants::PageType::PAGE
+          end
+
+          def post?
+            @page_type == Constants::PageType::POST
+          end
         end
       end
     end

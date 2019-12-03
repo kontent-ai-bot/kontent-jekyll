@@ -6,7 +6,7 @@ module Jekyll
   DEFAULT_LANGUAGE = nil
 
   class ContentGenerator < Generator
-    include Kentico::SiteProcessing
+    include ::Kentico::Kontent::Jekyll::SiteProcessing
 
     safe true
     priority :highest
