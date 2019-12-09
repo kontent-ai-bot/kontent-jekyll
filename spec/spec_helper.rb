@@ -41,30 +41,42 @@ class TestImporter
   def items_by_type(language)
     @items_by_type ||= {
       'pages_defaults' => [
-        create_item('test_id', 'default_content', 'pages_defaults', language, {
+        create_item('default_content', 'pages_defaults', language, {
           content: create_text('Text', 'Default content'),
         }),
-        create_item('test_id', 'default_title', 'pages_defaults', language, {
+        create_item('default_title', 'pages_defaults', language, {
           title: create_text('Title', 'Default title'),
         }),
       ],
       'posts_defaults' => [
-        create_item('test_id', 'default_date', 'posts_defaults', language, {
+        create_item('default_date', 'posts_defaults', language, {
           date: create_date('Date', '2019-12-09T16:29:11+0000'),
         }),
-        create_item('test_id', 'default_tags', 'posts_defaults', language, {
-          date: create_date('Date', '2019-12-09T16:29:11+0000'),
+        create_item('default_tags', 'posts_defaults', language, {
+          date: create_date('Date', '2019-12-10T16:29:11+0000'),
           tags: create_taxonomy('Tags', 'tags', [
             create_taxonomy_term('Tag1', 'tag1'),
             create_taxonomy_term('Tag2', 'tag2'),
           ]),
         }),
-        create_item('test_id', 'default_categories', 'posts_defaults', language, {
-          date: create_date('Date', '2019-12-09T16:29:11+0000'),
+        create_item('default_categories', 'posts_defaults', language, {
+          date: create_date('Date', '2019-12-11T16:29:11+0000'),
           categories: create_taxonomy('Categories', 'categories', [
             create_taxonomy_term('Category1', 'category1'),
             create_taxonomy_term('Category2', 'category2'),
           ]),
+        }),
+        create_item('default_data', 'pages_defaults', language, {
+          date: create_date('Date', '2019-12-12T16:29:11+0000'),
+          asset: create_asset('Asset', 'test_asset_url'),
+        }),
+      ],
+      'overridden_defaults' => [
+        create_item('overridden_title', 'overridden_defaults', language, {
+          overridden_title: create_text('Overridden title', 'Overridden title'),
+        }),
+        create_item('overridden_content', 'overridden_defaults', language, {
+          overridden_content: create_text('Overridden content', 'Overridden content'),
         }),
       ],
     }
@@ -76,9 +88,9 @@ class TestImporter
 
   private
 
-  def create_item(id, codename, type, language, elements)
+  def create_item(codename, type, language, elements)
     TestItem.new(
-    { codename: codename, id: id, language: language, type: type },
+    { codename: codename, id: codename, language: language, type: type },
       elements,
     )
   end
@@ -156,8 +168,13 @@ RSpec.configure do |config|
       future: true,
       permalink: 'pretty',
       kentico: {
+        default_layout: 'default',
         pages: {
-          pages_defaults: {layout: 'default'},
+          pages_defaults: {},
+          overridden_defaults: {
+            title: 'overridden_title',
+            content: 'overridden_content',
+          }
         },
         posts: {
           type: 'posts_defaults',

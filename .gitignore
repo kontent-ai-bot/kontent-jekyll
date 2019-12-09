@@ -1,3 +1,5 @@
+/spec/dest
+
 *.gem
 *.rbc
 /.config
