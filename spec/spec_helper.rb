@@ -79,6 +79,14 @@ class TestImporter
           overridden_content: create_text('Overridden content', 'Overridden content'),
         }),
       ],
+      'collection_pages' => [
+        create_item('collection_page_1', 'collection_pages', language, {
+          content: create_text('Content', 'Collection page 1')
+        }),
+        create_item('collection_page_2', 'collection_pages', language, {
+          content: create_text('Content', 'Collection page 2')
+        }),
+      ],
     }
   end
 
@@ -174,7 +182,11 @@ RSpec.configure do |config|
           overridden_defaults: {
             title: 'overridden_title',
             content: 'overridden_content',
-          }
+          },
+          collection_pages: {
+            layout: 'collection_page',
+            collection: 'collection',
+          },
         },
         posts: {
           type: 'posts_defaults',

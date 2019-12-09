@@ -33,7 +33,7 @@ module Kentico
               pages = items_by_type[type.to_s]
               next unless pages
 
-              collection = page_config&.collection
+              collection_name = page_config&.collection
 
               pages_data = []
               pages.each do |page_item|
@@ -44,22 +44,22 @@ module Kentico
                 mapped_name = filename_resolver.execute(page_item)
                 filename = "#{mapped_name}.html"
 
-                page_data = OpenStruct.new(content: content, collection: collection, front_matter: front_matter, filename: filename)
+                page_data = OpenStruct.new(content: content, collection: collection_name, front_matter: front_matter, filename: filename)
                 pages_data << page_data
               end
 
-              are_pages_from_collection = collection && !collection.empty? && !RESERVED_COLLECTIONS.include?(collection)
+              are_pages_from_collection = collection_name && !collection_name.empty? && !RESERVED_COLLECTIONS.include?(collection_name)
 
               unless are_pages_from_collection
                 @site.pages += pages_data.map { |page_data| create_kentico_page(@site, page_data) }
                 next
               end
 
-              collection_config = @site.config['collections'][collection]
+              collection_config = @site.config['collections'][collection_name]
               if collection_config
                 collection_config['output'] = true unless defined?(collection_config['output'])
               else
-                @site.config['collections'][collection] = { 'output' => true }
+                @site.config['collections'][collection_name] = { 'output' => true }
               end
 
               collection = @site.collections[collection_name] ||= ::Jekyll::Collection.new(@site, collection_name)

@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-# tests for defaults such as content element codename etc
 describe 'default page settings' do
   it 'page contains content' do
     visit('default_content')
@@ -45,8 +44,19 @@ describe 'overridden page settings' do
   end
 end
 
-#overriden_defaults
+describe 'collection pages' do
+  it 'pages from collection are outputted' do
+    visit('collection/collection_page_1')
+    expect(page).to have_content('Collection page 1')
 
-#collections
+    visit('/collection/collection_page_2')
+    expect(page).to have_content('Collection page 2')
+  end
+
+  it 'collection pages are available from the site object' do
+    visit('collection/collection_page_1')
+    expect(page).to have_selector('.collection-size', text: '2')
+  end
+end
 
 #resolvers
