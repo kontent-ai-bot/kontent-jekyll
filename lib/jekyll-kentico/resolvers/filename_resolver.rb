@@ -8,8 +8,8 @@ module Kentico
           end
 
           def execute(content_item)
-            content = custom_resolver && custom_resolver.resolve(content_item)
-            content || resolve_internal(content_item)
+            filename = custom_resolver && custom_resolver.resolve(content_item)
+            filename || resolve_internal(content_item)
           end
 
           private

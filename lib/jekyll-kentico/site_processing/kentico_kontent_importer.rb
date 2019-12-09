@@ -9,6 +9,7 @@ module Kentico
   module Kontent
     module Jekyll
       module SiteProcessing
+        include Kentico::Kontent::Jekyll::Constants
         include Kentico::Kontent::Jekyll::Resolvers
 
         class KenticoKontentImporter
@@ -38,8 +39,8 @@ module Kentico
           end
 
           def delivery_client
-            project_id = value_for(@config, KenticoConfigKeys::PROJECT_ID)
-            secure_key = value_for(@config, KenticoConfigKeys::SECURE_KEY)
+            project_id = value_for(@config, Constants::KenticoConfigKeys::PROJECT_ID)
+            secure_key = value_for(@config, Constants::KenticoConfigKeys::SECURE_KEY)
 
             ::Kentico::Kontent::Delivery::DeliveryClient.new(
               project_id: project_id,

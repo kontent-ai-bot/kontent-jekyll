@@ -82,7 +82,7 @@ module Kentico
 
             if custom_resolver
               extra_data = custom_resolver.resolve(content_item, page_type)
-              front_matter.merge!(extra_data)
+              front_matter.merge!(extra_data) if extra_data
             end
 
             front_matter

@@ -98,6 +98,22 @@ class TestImporter
           content: create_text('Modified key data content', '{{ site.data.items.custom_data_key[0].elements.content.name }}'),
         }),
       ],
+      'resolved_pages' => [
+        create_item('resolved_content', 'resolved_pages', language, {
+          resolved_content: create_text('Home element', 'Resolved content'),
+        }),
+        create_item('original_filename', 'resolved_pages', language, {
+          resolved_filename: create_text('New filename', 'resolved_filename'),
+          content: create_text('Content', 'Original content'),
+        }),
+        create_item('resolved_front_matter', 'resolved_pages', language, {
+          extra_variable: create_text('Extra variable', 'Content from extra front matter'),
+          content: create_text('Content', '{{ page.extra_variable }}'),
+        }),
+        create_item('resolved_data', 'resolved_pages', language, {
+          content: create_text('Content', '{{ site.data.items.resolved_data[3] }}'),
+        }),
+      ]
     }
   end
 
@@ -215,6 +231,11 @@ RSpec.configure do |config|
       permalink: 'pretty',
       kentico: {
         default_layout: 'default',
+        content_resolver: 'TestContentResolver',
+        filename_resolver: 'TestFilenameResolver',
+        front_matter_resolver: 'TestFrontMatterResolver',
+        data_resolver: 'TestDataResolver',
+        custom_site_processor: 'TestCustomSiteProcessor',
         pages: {
           pages_defaults: {},
           overridden_defaults: {
@@ -226,6 +247,7 @@ RSpec.configure do |config|
             collection: 'collection',
           },
           modified_data_key: {},
+          resolved_pages: {},
         },
         posts: {
           type: 'posts_defaults',
@@ -233,7 +255,8 @@ RSpec.configure do |config|
         },
         data: {
           pages_defaults: nil,
-          modified_data_key: 'custom_data_key'
+          modified_data_key: 'custom_data_key',
+          resolved_pages: 'resolved_data',
         },
         taxonomies: [
           'taxonomy_group_1',
@@ -244,4 +267,7 @@ RSpec.configure do |config|
   end
 
   Capybara.app = Rack::Jekyll.new(default_config)
+
+  # We need to wait until the website is compiled/generated before running tests
+  sleep 0.1 while Capybara.app.compiling?
 end

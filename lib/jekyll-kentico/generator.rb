@@ -77,7 +77,7 @@ module Jekyll
     end
 
     def create_importer(kentico_config)
-      importer_name = ENV['RACK_TEST_IMPORTER'] || KenticoKontentImporter
+      importer_name = ENV['RACK_TEST_IMPORTER'] || KenticoKontentImporter.to_s
       Module.const_get(importer_name).new(kentico_config)
     end
   end
