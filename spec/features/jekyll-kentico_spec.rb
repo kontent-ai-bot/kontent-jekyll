@@ -59,4 +59,23 @@ describe 'collection pages' do
   end
 end
 
+describe 'pages using data and taxonomies' do
+  it 'page renders correctly from data' do
+    visit('page_with_data')
+    expect(page).to have_content('Data content')
+  end
+
+  it 'page renders correctly from data with modified key' do
+    visit('page_with_data_with_modified_key')
+    expect(page).to have_content('Modified key data content')
+  end
+
+  it 'page renders correctly with taxonomy data' do
+    visit('page_with_taxonomies')
+    expect(page).to have_content('Term 1,Term 2,Term 2.1')
+  end
+end
+
 #resolvers
+#
+# site processor

@@ -146,7 +146,6 @@ module Kentico
 
             processed_taxonomies = {}
             filtered_taxonomies.each do |taxonomy|
-              @taxonomy_groups << taxonomy
               taxonomy_data = normalize_object({
                  system: taxonomy.system,
                  terms: taxonomy.terms,

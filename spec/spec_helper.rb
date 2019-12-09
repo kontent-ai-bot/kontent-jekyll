@@ -47,6 +47,12 @@ class TestImporter
         create_item('default_title', 'pages_defaults', language, {
           title: create_text('Title', 'Default title'),
         }),
+        create_item('page_with_data', 'pages_defaults', language, {
+          content: create_text('Data content', '{{ site.data.items.pages_defaults[2].elements.content.name }}'),
+        }),
+        create_item('page_with_taxonomies', 'pages_defaults', language, {
+          content: create_text('Taxonomy content', '{{ site.data.taxonomies.taxonomy_group_1.terms | concat: site.data.taxonomies.taxonomy_group_2.terms | map: \'name\' | join: \',\' }}'),
+        }),
       ],
       'posts_defaults' => [
         create_item('default_date', 'posts_defaults', language, {
@@ -87,14 +93,46 @@ class TestImporter
           content: create_text('Content', 'Collection page 2')
         }),
       ],
+      'modified_data_key' => [
+        create_item('page_with_data_with_modified_key', 'modified_data_key', language, {
+          content: create_text('Modified key data content', '{{ site.data.items.custom_data_key[0].elements.content.name }}'),
+        }),
+      ],
     }
   end
 
   def taxonomies
-    {}
+    [
+      create_taxonomy_group('taxonomy_group_1', 'Taxonomy 1', [
+        create_taxonomy_group_term('taxonomy_term_1', 'Term 1'),
+        create_taxonomy_group_term('taxonomy_term_2', 'Term 2'),
+      ]),
+      create_taxonomy_group('taxonomy_group_2', 'Taxonomy 2', [
+        create_taxonomy_group_term('taxonomy_term_2_1', 'Term 2.1'),
+      ]),
+    ]
   end
 
   private
+
+  def create_taxonomy_group(codename, name, terms = [])
+    to_openstruct({
+      system: {
+        codename: codename,
+        id: codename,
+        name: name,
+      },
+      terms: terms,
+    })
+  end
+
+  def create_taxonomy_group_term(codename, name, terms = [])
+    {
+      codename: codename,
+      name: name,
+      terms: terms,
+    }
+  end
 
   def create_item(codename, type, language, elements)
     TestItem.new(
@@ -187,11 +225,20 @@ RSpec.configure do |config|
             layout: 'collection_page',
             collection: 'collection',
           },
+          modified_data_key: {},
         },
         posts: {
           type: 'posts_defaults',
           layout: 'post',
         },
+        data: {
+          pages_defaults: nil,
+          modified_data_key: 'custom_data_key'
+        },
+        taxonomies: [
+          'taxonomy_group_1',
+          'taxonomy_group_2',
+        ],
       },
     }
   end
