@@ -40,31 +40,45 @@ module Jekyll
 
     def process_site(site, config)
       kentico_config = config.kentico
-      importer = KenticoKontentImporter.new(kentico_config)
+      importer = create_importer(kentico_config)
 
-      processor = SiteProcessor.new(site)
+      processor = SiteProcessor.new(site, kentico_config)
 
-      pages = []
-      posts = []
-      data = {}
+      all_items_by_type = {}
 
       languages = kentico_config.languages || [DEFAULT_LANGUAGE]
       languages.each do |language|
-        pages += importer.pages(language)
-        posts += importer.posts(language)
+        items_by_type = importer.items_by_type(language)
 
-        importer.data(language).each do |key, items|
-          data[key] = (data[key] || []) + items
+        all_items_by_type.merge!(items_by_type) do |key, currentItems, newItems|
+          currentItems || newItems
         end
       end
 
-      processor.process_pages(pages)
-      processor.process_posts(posts)
-      processor.process_data(data)
-      processor.process_taxonomies(importer.taxonomies)
+      taxonomies = importer.taxonomies
+
+      processor.process_pages(all_items_by_type)
+      processor.process_posts(all_items_by_type)
+      processor.process_data(all_items_by_type)
+      processor.process_taxonomies(taxonomies)
+
+      unique_items = all_items_by_type
+        .values
+        .flatten(1)
+        .uniq{ |i| "#{i.system.language};#{i.system.id}" }
+
+      kentico_data = OpenStruct.new(
+        items: unique_items,
+        taxonomy_groups: taxonomies,
+      )
 
       custom_site_processor = CustomSiteProcessor.for(kentico_config)
-      custom_site_processor&.generate(site, importer.kentico_data)
+      custom_site_processor&.generate(site, kentico_data)
+    end
+
+    def create_importer(kentico_config)
+      importer_name = ENV['RACK_TEST_IMPORTER'] || KenticoKontentImporter
+      Module.const_get(importer_name).new(kentico_config)
     end
   end
 end

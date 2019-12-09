@@ -96,7 +96,7 @@ module Kentico
             resolver_name = @global_config.front_matter_resolver
             return unless resolver_name
 
-            @custom_resolver =  Module.const_get(resolver_name).new
+            @custom_resolver = Module.const_get(resolver_name).new
           end
 
           def resolve_internal(content_item, page_type)
