@@ -31,5 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'capybara', '3.29.0'
   spec.add_development_dependency 'jekyll', '3.8.6'
 
-  spec.add_runtime_dependency 'delivery-sdk-ruby', '~> 2.0'
+  spec.add_runtime_dependency 'kontent-delivery-sdk-ruby', '~> 2.0'
 end
