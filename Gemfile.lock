@@ -52,7 +52,7 @@ GEM
       sass (~> 3.4)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
-    kontent-delivery-sdk-ruby (2.0.9)
+    kontent-delivery-sdk-ruby (2.0.11)
       dotenv (~> 2.7.0)
       nokogiri (~> 1.10.0, >= 1.8.4)
       rest-client (~> 2.1.0.rc1, >= 2.1.0.rc1)

@@ -5,6 +5,9 @@ require 'jekyll-kentico/resolvers/inline_content_item_resolver'
 
 require 'jekyll-kentico/constants/kentico_config_keys'
 
+require 'jekyll-kentico/version'
+require 'jekyll-kentico/gem_name'
+
 module Kentico
   module Kontent
     module Jekyll
@@ -53,6 +56,7 @@ module Kentico
           def retrieve_taxonomies
             delivery_client
               .taxonomies
+              .custom_headers(custom_headers)
               .request_latest_content
               .execute { |response| return response.taxonomies }
           end
@@ -60,7 +64,9 @@ module Kentico
           def retrieve_items(language)
             client = delivery_client.items
             client = client.language(language) if language
-            client.request_latest_content
+            client
+              .custom_headers(custom_headers)
+              .request_latest_content
               .depth(@config.max_linked_items_depth || 1)
               .execute { |response| return response.items }
           end
@@ -69,6 +75,13 @@ module Kentico
             potential_value = config[key]
             return ENV[potential_value.gsub('ENV_', '')] if !potential_value.nil? && potential_value.start_with?('ENV_')
             potential_value
+          end
+
+          # Add extra headers like tracking
+          def custom_headers
+            {
+              'X-KC-SOURCE' => "#{::Jekyll::Kentico::GEM_NAME} #{::Jekyll::Kentico::VERSION}",
+            }
           end
         end
       end
