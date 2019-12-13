@@ -2,6 +2,10 @@ module Kentico
   module Kontent
     module Jekyll
       module Resolvers
+
+        ##
+        # This class instantiate the resolver based on the name from configuration.
+
         class ContentLinkResolver
           def self.for(config)
             class_name = config.content_link_resolver

@@ -13,10 +13,17 @@ module Kentico
   module Kontent
     module Jekyll
       module SiteProcessing
+
+        ##
+        # This class processes the the imported content and populate Jekyll structures.
+
         class SiteProcessor
           include Kentico::Kontent::Jekyll::Constants
           include Kentico::Kontent::Jekyll::Resolvers
           include Kentico::Kontent::Jekyll::Utils
+
+          ##
+          # These collections have specific purposes in the original Jekyll generation will be omitted.
 
           RESERVED_COLLECTIONS = %w(posts data)
 
@@ -24,6 +31,9 @@ module Kentico
             @site = site
             @config = config
           end
+
+          ##
+          # Populates standard Jekyll pages and collections
 
           def process_pages(items_by_type)
             pages_config = @config.pages
@@ -83,6 +93,9 @@ module Kentico
             @site.pages.sort_by!(&:name)
           end
 
+          ##
+          # Populates posts part of the Jekyll site
+
           def process_posts(items_by_type)
             posts_config = @config.posts
             return unless posts_config
@@ -108,6 +121,9 @@ module Kentico
               path = File.join(@site.source, '_posts', filename)
               post = create_document(path, @site, @site.posts, post_data)
 
+              ##
+              # We need to invoke these private methods as they correctly populate certain data automatically.
+
               post.instance_eval 'merge_defaults'
               post.instance_eval 'read_post_data'
 
@@ -117,6 +133,9 @@ module Kentico
             @site.posts.docs = @site.posts.docs.reverse.uniq(&:path).reverse
             @site.posts.docs.sort!
           end
+
+          ##
+          # Populates data part of the Jekyll site.
 
           def process_data(items_by_type)
             config = @config.data
@@ -137,6 +156,9 @@ module Kentico
 
             @site.data.merge!({ 'items' => data_items })
           end
+
+          ##
+          # Populates data part of the Jekyll site with taxonomies.
 
           def process_taxonomies(taxonomies)
             codenames = @config.taxonomies
@@ -159,13 +181,17 @@ module Kentico
 
           private
 
+          ##
+          # Creates a Jekyll::Page.
+
           def create_kentico_page(site, page_info)
             page = ::Jekyll::Page.allocate
 
-            # A hack to create a Jekyll::Page with custom constructor without overriding the class
+            ## A hack to create a Jekyll::Page with custom constructor without overriding the class
             # because jekyll-redirect-from can work only with Jekyll::Page instances.
             # Once this PR https://github.com/jekyll/jekyll-redirect-from/pull/204 is merged and released
-            # we can create a subclass of the Page and simplify the code
+            # we can create a subclass of the Page and simplify the code.
+
             page.define_singleton_method(:initialize) do
               @site = site
               @base = site.source
@@ -193,6 +219,9 @@ module Kentico
 
             page.initialize
           end
+
+          ##
+          # Creates a Jekyll::Document. Used for collections.
 
           def create_document(path, site, collection, source)
             doc = ::Jekyll::Document.new(path, site: site, collection: collection)

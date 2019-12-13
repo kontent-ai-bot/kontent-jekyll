@@ -3,10 +3,15 @@ require 'jekyll-kentico/site_processing/kentico_kontent_importer'
 require 'jekyll-kentico/site_processing/site_processor'
 
 module Jekyll
-  DEFAULT_LANGUAGE = nil
+
+  ##
+  # This class generates content stored in Kentico Cloud CMS and populute
+  # particular Jekyll structures so the website is correctly outputted
+  # during the build process.
 
   class ContentGenerator < Generator
     include ::Kentico::Kontent::Jekyll::SiteProcessing
+    DEFAULT_LANGUAGE = nil
 
     safe true
     priority :highest
@@ -24,6 +29,9 @@ module Jekyll
 
     private
 
+    ##
+    # Parses Jekyll configuration into OpenStruct structure.
+
     def parse_config(site)
       JSON.parse(
         JSON.generate(site.config),
@@ -31,12 +39,20 @@ module Jekyll
       )
     end
 
+    ##
+    # Load custom resolvers from the _plugins/kentico directory.
+
     def load_custom_processors!(config)
       mapper_search_path = File.join(config.source, config.plugins_dir, 'kentico')
       mapper_files = Utils.safe_glob(mapper_search_path, File.join('**', '*.rb'))
 
       External.require_with_graceful_fail(mapper_files)
     end
+
+    ##
+    # Processed the site.
+    # It imports KC content for every language from the config file.
+    # Then it pass the content to the site processor to populate Jekyll structures.
 
     def process_site(site, config)
       kentico_config = config.kentico
@@ -75,6 +91,11 @@ module Jekyll
       custom_site_processor = CustomSiteProcessor.for(kentico_config)
       custom_site_processor&.generate(site, kentico_data)
     end
+
+
+    ##
+    # Creates a desired content importer. RACK_TEST_IMPORTER class name and implementation
+    # is specified in RSpec tests.
 
     def create_importer(kentico_config)
       importer_name = ENV['RACK_TEST_IMPORTER'] || KenticoKontentImporter.to_s

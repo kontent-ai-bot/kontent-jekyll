@@ -2,6 +2,12 @@ module Kentico
   module Kontent
     module Jekyll
       module Resolvers
+
+        ##
+        # This class resolve the filename of the page.
+        # If no user-defined resolver was provided or it returned nil
+        # then content will be resolved in a default way.
+
         class FilenameResolver
           def initialize(global_config)
             @global_config = global_config
@@ -14,6 +20,9 @@ module Kentico
 
           private
 
+          ##
+          # User-provided provided resolver is instantiated based on the name from configuration.
+
           def custom_resolver
             return @custom_resolver if @custom_resolver
 
@@ -22,6 +31,10 @@ module Kentico
 
             @custom_resolver = Module.const_get(resolver_name).new
           end
+
+          ##
+          # Internal resolver will try to locate the url slug element and return its value.
+          # If no slug was present then the item's codename will be used as the filename.
 
           def resolve_internal(content_item)
             url_slug = get_url_slug(content_item)

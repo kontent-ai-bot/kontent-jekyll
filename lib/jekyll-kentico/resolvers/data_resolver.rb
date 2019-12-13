@@ -2,6 +2,12 @@ module Kentico
   module Kontent
     module Jekyll
       module Resolvers
+
+        ##
+        # This class resolve the data that will be injected into 'site.data' object.
+        # If no user-defined resolver was provided or it returned nil
+        # then content will be resolved in a default way.
+
         class DataResolver
           def initialize(global_config)
             @global_config = global_config
@@ -14,6 +20,9 @@ module Kentico
 
           private
 
+          ##
+          # User-provided provided resolver is instantiated based on the name from configuration.
+
           def custom_resolver
             return @custom_resolver if @custom_resolver
 
@@ -22,6 +31,10 @@ module Kentico
 
             @custom_resolver = Module.const_get(resolver_name).new
           end
+
+          ##
+          # It resolves the content item and outputs only system and element fields as the original
+          # item also contains methods, etc.
 
           def resolve_internal(item)
             OpenStruct.new(

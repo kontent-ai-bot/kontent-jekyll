@@ -2,6 +2,11 @@ module Kentico
   module Kontent
     module Jekyll
       module Utils
+
+        ##
+        # Transforms any object into easily seriazible format.
+        # OpenStruct is converted to hash and Symbol keys are transformed to string keys.
+
         def normalize_object(object)
           stringify_all_keys(to_hash(object))
         end
