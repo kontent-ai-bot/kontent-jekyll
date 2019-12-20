@@ -1,18 +1,16 @@
 module Kentico
   module Kontent
-    module Jekyll
-      module Constants
-        module ItemElementType
-          ASSET = 'asset'
-          DATE_TIME = 'date_time'
-          LINKED_ITEMS = 'modular_content'
-          MULTIPLE_CHOICE = 'multiple_choice'
-          NUMBER = 'number'
-          RICH_TEXT = 'rich_text'
-          TAXONOMY = 'taxonomy'
-          TEXT = 'text'
-          URL_SLUG = 'url_slug'
-        end
+    module Constants
+      module ItemElementType
+        ASSET = 'asset'
+        DATE_TIME = 'date_time'
+        LINKED_ITEMS = 'modular_content'
+        MULTIPLE_CHOICE = 'multiple_choice'
+        NUMBER = 'number'
+        RICH_TEXT = 'rich_text'
+        TAXONOMY = 'taxonomy'
+        TEXT = 'text'
+        URL_SLUG = 'url_slug'
       end
     end
   end

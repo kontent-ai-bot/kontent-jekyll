@@ -5,8 +5,8 @@ require 'kontent-jekyll/version'
 require 'kontent-jekyll/gem_name'
 
 Gem::Specification.new do |spec|
-  spec.name          = Jekyll::Kentico::GEM_NAME
-  spec.version       = Jekyll::Kentico::VERSION
+  spec.name          = Kentico::Kontent::GEM_NAME
+  spec.version       = Kentico::Kontent::VERSION
   spec.authors       = ['RadoslavK']
   spec.email         = ['RadoslavK@kentico.com']
 
@@ -39,8 +39,8 @@ end
 #embedded_gemspec = Gem::Specification::load('C:\kontent-delivery-sdk-ruby\kontent-delivery-sdk-ruby.gemspec')
 #
 #Gem::Specification.new do |spec|
-#  spec.name          = Jekyll::Kentico::GEM_NAME
-#  spec.version       = Jekyll::Kentico::VERSION
+#  spec.name          = Kentico::Kontent::GEM_NAME
+#  spec.version       = Kentico::Kontent::VERSION
 #  spec.authors       = ['RadoslavK']
 #  spec.email         = ['RadoslavK@kentico.com']
 #

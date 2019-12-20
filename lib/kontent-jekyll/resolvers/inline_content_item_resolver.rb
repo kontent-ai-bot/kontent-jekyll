@@ -1,16 +1,13 @@
 module Kentico
   module Kontent
-    module Jekyll
-      module Resolvers
+    module Resolvers
+      ##
+      # This class instantiate the resolver based on the name from configuration.
 
-        ##
-        # This class instantiate the resolver based on the name from configuration.
-
-        class InlineContentItemResolver
-          def self.for(config)
-            class_name = config.inline_content_item_resolver
-            class_name && Module.const_get(class_name).new
-          end
+      class InlineContentItemResolver
+        def self.for(config)
+          class_name = config.inline_content_item_resolver
+          class_name && Module.const_get(class_name).new
         end
       end
     end

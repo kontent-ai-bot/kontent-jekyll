@@ -4,7 +4,7 @@ Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content reposito
 
 ## Examples
 
-For a working example see [this project](https://github.com/RadoslavK/jekyll-blog).
+For a working example see [this project](https://github.com/RadoslavK/kontent-jekyll-blog).
 
 ## Installation
 

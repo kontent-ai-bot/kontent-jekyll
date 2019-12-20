@@ -1,53 +1,50 @@
 module Kentico
   module Kontent
-    module Jekyll
-      module Resolvers
+    module Resolvers
+      ##
+      # This class resolve the filename of the page.
+      # If no user-defined resolver was provided or it returned nil
+      # then content will be resolved in a default way.
+
+      class FilenameResolver
+        def initialize(global_config)
+          @global_config = global_config
+        end
+
+        def execute(content_item)
+          filename = custom_resolver && custom_resolver.resolve(content_item)
+          filename || resolve_internal(content_item)
+        end
+
+        private
 
         ##
-        # This class resolve the filename of the page.
-        # If no user-defined resolver was provided or it returned nil
-        # then content will be resolved in a default way.
+        # User-provided provided resolver is instantiated based on the name from configuration.
 
-        class FilenameResolver
-          def initialize(global_config)
-            @global_config = global_config
-          end
+        def custom_resolver
+          return @custom_resolver if @custom_resolver
 
-          def execute(content_item)
-            filename = custom_resolver && custom_resolver.resolve(content_item)
-            filename || resolve_internal(content_item)
-          end
+          resolver_name = @global_config.filename_resolver
+          return unless resolver_name
 
-          private
+          @custom_resolver = Module.const_get(resolver_name).new
+        end
 
-          ##
-          # User-provided provided resolver is instantiated based on the name from configuration.
+        ##
+        # Internal resolver will try to locate the url slug element and return its value.
+        # If no slug was present then the item's codename will be used as the filename.
 
-          def custom_resolver
-            return @custom_resolver if @custom_resolver
+        def resolve_internal(content_item)
+          url_slug = get_url_slug(content_item)
+          url_slug&.value || content_item.system.codename
+        end
 
-            resolver_name = @global_config.filename_resolver
-            return unless resolver_name
+        def get_url_slug(item)
+          item.elements.each_pair { |_codename, element| return element if slug?(element) }
+        end
 
-            @custom_resolver = Module.const_get(resolver_name).new
-          end
-
-          ##
-          # Internal resolver will try to locate the url slug element and return its value.
-          # If no slug was present then the item's codename will be used as the filename.
-
-          def resolve_internal(content_item)
-            url_slug = get_url_slug(content_item)
-            url_slug&.value || content_item.system.codename
-          end
-
-          def get_url_slug(item)
-            item.elements.each_pair { |_codename, element| return element if slug?(element) }
-          end
-
-          def slug?(element)
-            element.type == Constants::ItemElementType::URL_SLUG
-          end
+        def slug?(element)
+          element.type == Constants::ItemElementType::URL_SLUG
         end
       end
     end

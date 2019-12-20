@@ -89,76 +89,73 @@ end
 
 module Kentico
   module Kontent
-    module Jekyll
-      module Resolvers
+    module Resolvers
+      ##
+      # This class resolve the front matter of the page.
+      # It will be merged with internally generated front matter.
+
+      class FrontMatterResolver
+        def initialize(global_config)
+          @global_config = global_config
+        end
+
+        def execute(content_item, page_type)
+          front_matter = resolve_internal(content_item, page_type)
+
+          if custom_resolver
+            extra_data = custom_resolver.resolve(content_item, page_type)
+            front_matter.merge!(extra_data) if extra_data
+          end
+
+          front_matter
+        end
+
+        private
 
         ##
-        # This class resolve the front matter of the page.
-        # It will be merged with internally generated front matter.
+        # User-provided provided resolver is instantiated based on the name from configuration.
 
-        class FrontMatterResolver
-          def initialize(global_config)
-            @global_config = global_config
-          end
+        def custom_resolver
+          return @custom_resolver if @custom_resolver
 
-          def execute(content_item, page_type)
-            front_matter = resolve_internal(content_item, page_type)
+          resolver_name = @global_config.front_matter_resolver
+          return unless resolver_name
 
-            if custom_resolver
-              extra_data = custom_resolver.resolve(content_item, page_type)
-              front_matter.merge!(extra_data) if extra_data
-            end
+          @custom_resolver = Module.const_get(resolver_name).new
+        end
 
-            front_matter
-          end
+        ##
+        # Posts and pages have different default front matter (tags, categories etc)
+        # so we need to determine the correct internal resolver based on the page type.
 
-          private
+        def resolve_internal(content_item, page_type)
+          @content_item = content_item
+          @page_type = page_type
 
-          ##
-          # User-provided provided resolver is instantiated based on the name from configuration.
+          resolver_factory
+            .new(@global_config, type_config, content_item)
+            .resolve
+        end
 
-          def custom_resolver
-            return @custom_resolver if @custom_resolver
+        ##
+        # Determines default front matter resolver based on the page type.
 
-            resolver_name = @global_config.front_matter_resolver
-            return unless resolver_name
+        def resolver_factory
+          return PostFrontMatterResolver if post?
+          PageFrontMatterResolver if page?
+        end
 
-            @custom_resolver = Module.const_get(resolver_name).new
-          end
+        def type_config
+          return @global_config.posts if post?
+          @global_config.pages[@content_item.system.type] if page?
+        end
 
-          ##
-          # Posts and pages have different default front matter (tags, categories etc)
-          # so we need to determine the correct internal resolver based on the page type.
+        def page?
+          @page_type == Constants::PageType::PAGE
+        end
 
-          def resolve_internal(content_item, page_type)
-            @content_item = content_item
-            @page_type = page_type
-
-            resolver_factory
-              .new(@global_config, type_config, content_item)
-              .resolve
-          end
-
-          ##
-          # Determines default front matter resolver based on the page type.
-
-          def resolver_factory
-            return PostFrontMatterResolver if post?
-            PageFrontMatterResolver if page?
-          end
-
-          def type_config
-            return @global_config.posts if post?
-            @global_config.pages[@content_item.system.type] if page?
-          end
-
-          def page?
-            @page_type == Constants::PageType::PAGE
-          end
-
-          def post?
-            @page_type == Constants::PageType::POST
-          end
+        def post?
+          @page_type == Constants::PageType::POST
         end
       end
     end
