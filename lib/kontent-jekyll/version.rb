@@ -1,5 +1,5 @@
 module Jekyll
   module Kentico
-    GEM_NAME = 'jekyll-kentico'
+    VERSION = '0.11.0'
   end
 end

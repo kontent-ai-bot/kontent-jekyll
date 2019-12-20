@@ -1,13 +1,13 @@
 require 'date'
 
-require 'jekyll-kentico/constants/page_type'
+require 'kontent-jekyll/constants/page_type'
 
-require 'jekyll-kentico/resolvers/front_matter_resolver'
-require 'jekyll-kentico/resolvers/content_resolver'
-require 'jekyll-kentico/resolvers/data_resolver'
-require 'jekyll-kentico/resolvers/filename_resolver'
+require 'kontent-jekyll/resolvers/front_matter_resolver'
+require 'kontent-jekyll/resolvers/content_resolver'
+require 'kontent-jekyll/resolvers/data_resolver'
+require 'kontent-jekyll/resolvers/filename_resolver'
 
-require 'jekyll-kentico/utils/normalize_object'
+require 'kontent-jekyll/utils/normalize_object'
 
 module Kentico
   module Kontent

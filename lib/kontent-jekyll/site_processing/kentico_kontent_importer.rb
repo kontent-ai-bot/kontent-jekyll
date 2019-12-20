@@ -1,12 +1,12 @@
 require 'kontent-delivery-sdk-ruby'
 
-require 'jekyll-kentico/resolvers/content_link_resolver'
-require 'jekyll-kentico/resolvers/inline_content_item_resolver'
+require 'kontent-jekyll/resolvers/content_link_resolver'
+require 'kontent-jekyll/resolvers/inline_content_item_resolver'
 
-require 'jekyll-kentico/constants/kentico_config_keys'
+require 'kontent-jekyll/constants/kentico_config_keys'
 
-require 'jekyll-kentico/version'
-require 'jekyll-kentico/gem_name'
+require 'kontent-jekyll/version'
+require 'kontent-jekyll/gem_name'
 
 module Kentico
   module Kontent

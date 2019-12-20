@@ -14,7 +14,7 @@ Add this to your gem's Jekyll plugins:
 source 'https://rubygems.org'
 
 group :jekyll_plugins do
-  gem 'jekyll-kentico'
+  gem 'kontent-jekyll'
 end
 ```
 
@@ -29,11 +29,11 @@ You can also run `bundle exec jekyll serve` to run the built site.
 
 To configure the extension, add the following configuration block to Jekyll's `_config.yml`:
 
-For full configuration [see wiki](https://github.com/RadoslavK/jekyll-kentico/wiki).
+For full configuration [see wiki](https://github.com/RadoslavK/kontent-jekyll/wiki).
 
 ```yaml
 plugins:
-- jekyll-kentico
+- kontent-jekyll
 kentico:
   project_id: 2dd742d6-107b-48b0-8335-6674c76c9b93
   posts:                                                      

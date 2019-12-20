@@ -1,8 +1,8 @@
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require 'jekyll-kentico/version'
-require 'jekyll-kentico/gem_name'
+require 'kontent-jekyll/version'
+require 'kontent-jekyll/gem_name'
 
 Gem::Specification.new do |spec|
   spec.name          = Jekyll::Kentico::GEM_NAME
@@ -11,8 +11,8 @@ Gem::Specification.new do |spec|
   spec.email         = ['RadoslavK@kentico.com']
 
   spec.summary       = 'Kentico Kontent plugin for Jekyll'
-  spec.description   = 'Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
-  spec.homepage      = 'https://github.com/RadoslavK/jekyll-kentico'
+  spec.description   = 'Kontent Jekyll is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
+  spec.homepage      = 'https://github.com/RadoslavK/kontent-jekyll'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -46,7 +46,7 @@ end
 #
 #  spec.summary       = 'Kentico Kontent plugin for Jekyll'
 #  spec.description   = 'Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
-#  spec.homepage      = 'https://github.com/RadoslavK/jekyll-kentico'
+#  spec.homepage      = 'https://github.com/RadoslavK/kentico-jekyll'
 #
 #  # Specify which files should be added to the gem when it is released.
 #  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

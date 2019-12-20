@@ -6,7 +6,7 @@ require 'capybara/dsl'
 require 'capybara/rspec'
 require 'rack/jekyll'
 require 'fileutils'
-require File.expand_path('../lib/jekyll-kentico', __dir__)
+require File.expand_path('../lib/kontent-jekyll', __dir__)
 
 Jekyll.logger.log_level = :error
 

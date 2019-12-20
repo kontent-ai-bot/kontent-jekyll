@@ -1,6 +1,6 @@
-require 'jekyll-kentico/site_processing/custom_site_processor'
-require 'jekyll-kentico/site_processing/kentico_kontent_importer'
-require 'jekyll-kentico/site_processing/site_processor'
+require 'kontent-jekyll/site_processing/custom_site_processor'
+require 'kontent-jekyll/site_processing/kentico_kontent_importer'
+require 'kontent-jekyll/site_processing/site_processor'
 
 module Jekyll
 
