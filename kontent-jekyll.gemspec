@@ -7,6 +7,7 @@ require 'kontent-jekyll/gem_name'
 Gem::Specification.new do |spec|
   spec.name          = Kentico::Kontent::GEM_NAME
   spec.version       = Kentico::Kontent::VERSION
+  spec.licenses      = ['MIT']
   spec.authors       = ['RadoslavK']
   spec.email         = ['RadoslavK@kentico.com']
 
@@ -41,6 +42,7 @@ end
 #Gem::Specification.new do |spec|
 #  spec.name          = Kentico::Kontent::GEM_NAME
 #  spec.version       = Kentico::Kontent::VERSION
+#  spec.licenses      = ['MIT']
 #  spec.authors       = ['RadoslavK']
 #  spec.email         = ['RadoslavK@kentico.com']
 #
