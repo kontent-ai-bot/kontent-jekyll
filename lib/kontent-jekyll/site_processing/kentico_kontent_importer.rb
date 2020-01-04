@@ -79,7 +79,7 @@ module Kentico
         # Add extra headers like tracking
         def custom_headers
           {
-            'X-KC-SOURCE' => "#{GEM_NAME} #{VERSION}",
+            'X-KC-SOURCE' => "#{GEM_NAME};#{VERSION}",
           }
         end
       end
