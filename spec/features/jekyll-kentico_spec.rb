@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Kentico::Kontent::Jekyll do
+describe 'kontent-jekyll' do
   after(:all) { cleanup_fixture }
 
   describe 'default page settings' do

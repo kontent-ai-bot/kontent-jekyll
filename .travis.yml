@@ -1,0 +1,20 @@
+language: ruby
+dist: trusty
+sudo: false
+rvm:
+  - 2.6.3
+before_install:
+  - gem install bundler -v 2.0.1
+script: bundle exec rake
+branches:
+  only:
+    - master
+    - /^v.*$/
+deploy:
+  provider: rubygems
+  api_key:
+    secure: kXuXaG6g0smORMWsq7iUoJFDFEoivezuz1G9Z2dCRHG2liLtfqqhYu0tJv6ypUzHzP41zseeFhVRel0P0NmrvOLaIf68zOi8YzYuChho8rfPVBZ5fRICJlVeIOAXnBJRftBTgbOI0nN/Iwy6LLlj+Uj8f2yOWep76dud453S+O8uwkCGRm+vRHp8vYxYoK9f8Rx7Ih10Cq5qTht1E4KlQP3TWt3uRUo8BnBS+v6mNvYJXWy4iYxo1UKNVhgvRGk7pRWenJPqhBkWacOvWBa8Q3CCKlS7OPxJziRKgWHFUfGdtop6wTEqZQWSWnr6P0hPr6X6CGvk07bPSq2GH8GtO07mYPshCaEH7aCBq9arIp0EXttlfewE8nXoTHYADd1G/T43uE1Lxf8VqRD156GjmULZ9bI88t48Nx/7aCdoPH+kANYDXfgJ98Ncd4QqRZ1DmUL4y/CD1dHZnolJ0jKxoY0AvSVOTiPH/47jbZ2gROTm5Up2y2BBI348Qu88zJCGXIOggW6gq7ESOXcxSISyoKk8Pe6c7F+lNRpSIgWxw45XlatlUzKZblzHx1Y0pqwLt3Mkxdsxc+TfMGy/CZrSF8aAMScslmIOVguqXd9qGJYhvedgdxTDBizwxLpa3wZ0m/zDjaqNFKTABxguBe2+fF7Q/PqfdngL3+LFZr7LSbA=
+  gem: kontent-jekyll
+  on:
+    tags: true
+    repo: RadoslavK/kontent-jekyll
