@@ -1,3 +1,8 @@
+[![Build Status](https://api.travis-ci.com/RadoslavK/kontent-jekyll.svg?branch=master)](https://travis-ci.com/RadoslavK/kontent-jekyll)
+[![Join the chat at https://kentico-community.slack.com](https://img.shields.io/badge/join-slack-E6186D.svg)](https://kentico-community.slack.com)
+[![Stack Overflow](https://img.shields.io/badge/Stack%20Overflow-ASK%20NOW-FE7A16.svg?logo=stackoverflow&logoColor=white)](https://stackoverflow.com/tags/kentico-kontent)
+ [![Version](https://img.shields.io/gem/v/kontent-jekyll.svg?style=flat)](https://rubygems.org/gems/kontent-jekyll)
+
 # Jekyll Kentico
 
 Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.
