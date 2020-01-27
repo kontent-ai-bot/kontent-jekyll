@@ -11,6 +11,7 @@ module Kentico
 
     class ContentGenerator < Jekyll::Generator
       include SiteProcessing
+
       DEFAULT_LANGUAGE = nil
 
       safe true

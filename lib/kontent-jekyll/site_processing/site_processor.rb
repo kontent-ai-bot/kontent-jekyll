@@ -2,6 +2,8 @@ require 'date'
 
 require 'kontent-jekyll/constants/page_type'
 
+require 'kontent-jekyll/models/kentico_page'
+
 require 'kontent-jekyll/resolvers/front_matter_resolver'
 require 'kontent-jekyll/resolvers/content_resolver'
 require 'kontent-jekyll/resolvers/data_resolver'
@@ -19,6 +21,7 @@ module Kentico
         include Constants
         include Resolvers
         include Utils
+        include Models
 
         ##
         # These collections have specific purposes in the original Jekyll generation will be omitted.
@@ -59,7 +62,7 @@ module Kentico
             are_pages_from_collection = collection_name && !collection_name.empty? && !RESERVED_COLLECTIONS.include?(collection_name)
 
             unless are_pages_from_collection
-              @site.pages += pages_data.map { |page_data| create_kentico_page(@site, page_data) }
+              @site.pages += pages_data.map { |page_data| KenticoPage.new(@site, page_data) }
               next
             end
 
@@ -178,45 +181,6 @@ module Kentico
         end
 
         private
-
-        ##
-        # Creates a Jekyll::Page.
-
-        def create_kentico_page(site, page_info)
-          page = Jekyll::Page.allocate
-
-          ## A hack to create a Jekyll::Page with custom constructor without overriding the class
-          # because jekyll-redirect-from can work only with Jekyll::Page instances.
-          # Once this PR https://github.com/jekyll/jekyll-redirect-from/pull/204 is merged and released
-          # we can create a subclass of the Page and simplify the code.
-
-          page.define_singleton_method(:initialize) do
-            @site = site
-            @base = site.source
-            @dir = ''
-            @name = page_info.filename
-            @path = if site.in_theme_dir(@base) == @base
-                      site.in_theme_dir(@base, @dir, @name)
-                    else
-                      site.in_source_dir(@base, @dir, @name)
-                    end
-
-            self.process(@name)
-
-            self.data = page_info.front_matter
-            self.content = page_info.content
-
-            data.default_proc = proc do |_, key|
-              site.frontmatter_defaults.find(File.join(@dir, @name), type, key)
-            end
-
-            Jekyll::Hooks.trigger :pages, :post_init, self
-
-            self
-          end
-
-          page.initialize
-        end
 
         ##
         # Creates a Jekyll::Document. Used for collections.
