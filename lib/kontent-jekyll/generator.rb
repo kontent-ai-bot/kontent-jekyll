@@ -5,7 +5,7 @@ require 'kontent-jekyll/site_processing/site_processor'
 module Kentico
   module Kontent
     ##
-    # This class generates content stored in Kentico Cloud CMS and populute
+    # This class generates content stored in Kentico Kontent CMS and populute
     # particular Jekyll structures so the website is correctly outputted
     # during the build process.
 
