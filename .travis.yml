@@ -17,4 +17,4 @@ deploy:
   gem: kontent-jekyll
   on:
     tags: true
-    repo: RadoslavK/kontent-jekyll
+    repo: Kentico/kontent-jekyll

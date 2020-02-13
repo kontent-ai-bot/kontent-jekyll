@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Kentico Kontent plugin for Jekyll'
   spec.description   = 'Kontent Jekyll is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
-  spec.homepage      = 'https://github.com/RadoslavK/kontent-jekyll'
+  spec.homepage      = 'https://github.com/Kentico/kontent-jekyll'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -48,7 +48,7 @@ end
 #
 #  spec.summary       = 'Kentico Kontent plugin for Jekyll'
 #  spec.description   = 'Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.'
-#  spec.homepage      = 'https://github.com/RadoslavK/kentico-jekyll'
+#  spec.homepage      = 'https://github.com/Kentico/kentico-jekyll'
 #
 #  # Specify which files should be added to the gem when it is released.
 #  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
