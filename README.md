@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.com/RadoslavK/kontent-jekyll.svg?branch=master)](https://travis-ci.com/RadoslavK/kontent-jekyll)
+[![Build Status](https://api.travis-ci.com/Kentico/kontent-jekyll.svg?branch=master)](https://travis-ci.com/Kentico/kontent-jekyll)
 [![Join the chat at https://kentico-community.slack.com](https://img.shields.io/badge/join-slack-E6186D.svg)](https://kentico-community.slack.com)
 [![Stack Overflow](https://img.shields.io/badge/Stack%20Overflow-ASK%20NOW-FE7A16.svg?logo=stackoverflow&logoColor=white)](https://stackoverflow.com/tags/kentico-kontent)
  [![Version](https://img.shields.io/gem/v/kontent-jekyll.svg?style=flat)](https://rubygems.org/gems/kontent-jekyll)
@@ -9,7 +9,7 @@ Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content reposito
 
 ## Examples
 
-For a working example see [this project](https://github.com/RadoslavK/kontent-jekyll-blog).
+For a working example see [this project](https://github.com/Kentico/kontent-jekyll-blog).
 
 ## Installation
 
@@ -34,7 +34,7 @@ You can also run `bundle exec jekyll serve` to run the built site.
 
 To configure the extension, add the following configuration block to Jekyll's `_config.yml`:
 
-For full configuration [see wiki](https://github.com/RadoslavK/kontent-jekyll/wiki).
+For full configuration [see wiki](https://github.com/Kentico/kontent-jekyll/wiki).
 
 ```yaml
 plugins:
@@ -47,7 +47,7 @@ kentico:
 
 ## Feedback & Contributing
 
-Check out the [contributing](https://github.com/RadoslavK/kontent-jekyll/blob/master/CONTRIBUTING.md) page to see the best places to file issues, start discussions, and begin contributing.
+Check out the [contributing](https://github.com/Kentico/kontent-jekyll/blob/master/CONTRIBUTING.md) page to see the best places to file issues, start discussions, and begin contributing.
 
 ## License
 
@@ -55,6 +55,6 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Kontent-Jekyll project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/RadoslavK/kontent-jekyll/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Kontent-Jekyll project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/Kentico/kontent-jekyll/blob/master/CODE_OF_CONDUCT.md).
 
-![Analytics](https://kentico-ga-beacon.azurewebsites.net/api/UA-69014260-4/RadoslavK/kontent-jekyll?pixel)
+![Analytics](https://kentico-ga-beacon.azurewebsites.net/api/UA-69014260-4/Kentico/kontent-jekyll?pixel)
