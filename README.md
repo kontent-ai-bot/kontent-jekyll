@@ -3,9 +3,9 @@
 [![Stack Overflow](https://img.shields.io/badge/Stack%20Overflow-ASK%20NOW-FE7A16.svg?logo=stackoverflow&logoColor=white)](https://stackoverflow.com/tags/kentico-kontent)
  [![Version](https://img.shields.io/gem/v/kontent-jekyll.svg?style=flat)](https://rubygems.org/gems/kontent-jekyll)
 
-# Jekyll Kentico
+# Kontent Jekyll
 
-Jekyll Kentico is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.
+Kontekt Jekyll is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.
 
 ## Examples
 
