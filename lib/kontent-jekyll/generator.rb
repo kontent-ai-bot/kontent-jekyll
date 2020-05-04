@@ -15,6 +15,11 @@ module Kentico
       DEFAULT_LANGUAGE = nil
 
       safe true
+
+      ##
+      # It is ensure correct order when executing generator plugins.
+      # We can not rely on the order of plugins from the config
+      # https://github.com/jekyll/jekyll/issues/8034
       priority :highest
 
       def generate(site)
@@ -68,7 +73,7 @@ module Kentico
           items_by_type = importer.items_by_type(language)
 
           all_items_by_type.merge!(items_by_type) do |key, currentItems, newItems|
-            currentItems || newItems
+            currentItems | newItems
           end
         end
 
