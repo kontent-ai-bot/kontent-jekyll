@@ -5,7 +5,7 @@
 
 # Kontent Jekyll
 
-Kontekt Jekyll is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.
+Kontent Jekyll is utilizing Kentico Kontent, headless CMS, as a content repository and integrates it with Jekyll static site generator. You can generate posts, pages, collections and data items.
 
 ## Examples
 
