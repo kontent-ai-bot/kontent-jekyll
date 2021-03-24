@@ -1,19 +1,17 @@
-name: Build
+name: Release
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  release:
+    types: [published]
 
 jobs:
-  test:
+  release:
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby-version: ['2.6']
-
+    
     steps:
     - uses: actions/checkout@v2
 
@@ -23,5 +21,8 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-    - name: Run tests
-      run: bundle exec rake
+    - name: Publish gem
+      uses: dawidd6/action-publish-gem@v1
+      with:
+        api_key: ${{secrets.RUBYGEMS_API_KEY}}
+
