@@ -1,5 +1,10 @@
 # Kontent Jekyll
 
+[![No Maintenance Intended](https://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+## :warning: Deprecation Notice
+> This repository has been archived and is no longer maintained.
+
 [![Build](https://github.com/Kentico/kontent-jekyll/actions/workflows/build.yml/badge.svg)](https://github.com/Kentico/kontent-jekyll/actions/workflows/build.yml)
 [![Version](https://img.shields.io/gem/v/kontent-jekyll.svg?style=flat)](https://rubygems.org/gems/kontent-jekyll)
 
